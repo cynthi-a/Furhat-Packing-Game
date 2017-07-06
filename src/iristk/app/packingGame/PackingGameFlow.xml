@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <flow name="PackingGameFlow" package="iristk.app.packingGame" 
-	initial="Idle" xmlns:this="iristk.app.packingGame.PackingGameFlow" xmlns="iristk.flow" 
+	initial="SetUp" xmlns:this="iristk.app.packingGame.PackingGameFlow" xmlns="iristk.flow" 
 	xmlns:p="iristk.flow.param" xmlns:agent="iristk.situated.SystemAgentFlow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="iristk.flow flow.xsd iristk.situated.SystemAgentFlow SystemAgentFlow.xsd">
+	
+	<import class="java.util.List"/>
+	<import class="java.util.LinkedList"/>
+	<import class="java.util.TreeSet"/>
 	
 	<param name="agent" type="iristk.situated.SystemAgentFlow"/>
 	
 	<var name="system" type="iristk.situated.SystemAgent" value="agent.getSystemAgent()"/> 
 
-	<var name="packingList" type="java.util.LinkedList&lt;String&gt;" value = "new java.util.LinkedList&lt;String&gt;()"/>
-	<var name="packables" type="java.util.TreeSet&lt;String&gt;" value="new java.util.TreeSet&lt;String &gt;()"/>
+	<var name="packingList" type="List&lt;String&gt;" value = "new java.util.LinkedList&lt;String&gt;()"/>
+	<var name="packables" type="TreeSet&lt;String &gt;" value="new java.util.TreeSet&lt;String&gt;()"/>
 	
 	<state id="SetUp">
 		<onentry>
-			<exec>packables.add("a hat"); packables.add("a pair of shoes")</exec>
+			<exec>packables.add("a hat"); packables.add("a pair of shoes"); System.out.println(packables.first())</exec>
 			<goto state="Idle"/>
 		</onentry>
 	</state>
@@ -37,7 +41,7 @@
 		<onentry>
 			<random>
 				<agent:say gesture="'smile'">Greetings! Do you want to play with me?</agent:say>
-				<agent:say gesture="'smile'">Hi I am Furhat! Let's play a game.</agent:say>
+				<agent:say gesture="'smile'">Hi. I am Furhat! Let's play a game.</agent:say>
 				<agent:say gesture="'smile'">Hey there! Let's play a game.</agent:say>
 			</random>
 			<goto state="ExplainGame"/>

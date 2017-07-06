@@ -6,19 +6,32 @@
   <rule id="root" scope="public">	
       <one-of>
   		<item>
-  			<item repeat="0-1">
-  				<one-of>
-  					<item>i think it might be</item>
-  					<item>my guess is</item>
-  				</one-of>
+  			<!-- <item repeat="0-1"> -->
+  			<item>
+  				I pack my bag and I take with me:
+  				<ruleref uri="#PACKABLES" />
   			</item>
-  			<ruleref uri="#number"/><tag>out.number=rules.number</tag>
+  			<!-- <ruleref uri="#number"/><tag>out.number=rules.number</tag> -->
   		</item>
   		<item>yes<tag>out.yes=1</tag></item>
    		<item>no<tag>out.no=1</tag></item>
       </one-of>
   </rule>
   
+  <rule id="packables">
+  	<one-of>
+  		<item>hat</item>
+  		<item>belt</item>
+  		<item>comb</item>
+  		<item>bathing suit</item>
+  		<item>towel</item>
+  		<item>toothbrush</item>
+  		<item>laptop</item>
+  		<item>cell phone</item>
+  	</one-of>
+  </rule>
+  
+<!--   
   <rule id="number">
 	  <one-of>
           <item>one<tag>out=1</tag></item>
@@ -33,5 +46,5 @@
           <item>ten<tag>out=10</tag></item>
       </one-of>
   </rule>
-  
+   -->
 </grammar>
