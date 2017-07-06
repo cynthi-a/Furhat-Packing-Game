@@ -7,8 +7,16 @@
 	<param name="agent" type="iristk.situated.SystemAgentFlow"/>
 	
 	<var name="system" type="iristk.situated.SystemAgent" value="agent.getSystemAgent()"/> 
-	 
-	<var name="number" type="Integer"/>
+
+	<var name="packingList" type="java.util.LinkedList&lt;String&gt;" value = "new java.util.LinkedList&lt;String&gt;()"/>
+	<var name="packables" type="java.util.TreeSet&lt;String&gt;" value="new java.util.TreeSet&lt;String &gt;()"/>
+	
+	<state id="SetUp">
+		<onentry>
+			<exec>packables.add("a hat"); packables.add("a pair of shoes")</exec>
+			<goto state="Idle"/>
+		</onentry>
+	</state>
 	
 	<state id="Idle" extends="Dialog">
 		<onentry>
@@ -27,54 +35,31 @@
 	
 	<state id="Greeting" extends="Dialog">
 		<onentry>
-			<agent:say>Hi there, let's play a game</agent:say>
-			<goto state="Start"/>
+			<random>
+				<agent:say gesture="'smile'">Greetings! Do you want to play with me?</agent:say>
+				<agent:say gesture="'smile'">Hi I am Furhat! Let's play a game.</agent:say>
+				<agent:say gesture="'smile'">Hey there! Let's play a game.</agent:say>
+			</random>
+			<goto state="ExplainGame"/>
 		</onentry>
 	</state>
 	
-	<state id="Start" extends="Dialog">
+		<state id="ExplainGame" extends="Dialog">
 		<onentry>
-			<exec>number = new java.util.Random().nextInt(10) + 1</exec>
-			<exec>system.putUsers("guesses", 0)</exec>
-			<agent:say>I am thinking of a number between 1 and 10.</agent:say>
-			<goto state="Guess"/>
+			<agent:say>I am going on holidays. I need to pack some stuff. Do you want to help?</agent:say>
+			<goto state="PackIntro"/>
 		</onentry>
 	</state>
 	
-	<state id="Guess" extends="Dialog">
+	<state id="PackIntro" extends="Dialog">
 		<onentry>
-			<agent:say>What is your guess?</agent:say>
-			<agent:listen/>
+			<agent:say>I pack my bags and I take with me:
+				<expr>packables.first()</expr>
+			</agent:say>
+			<!-- goto state="Pack"/ -->
 		</onentry>
-		<onevent name="sense.user.speak" cond="event?:sem:number">
-			<if cond="system.isAttendingAll()">
-				<agent:attend target="event:user"/>
-			</if>
-			<exec>system.getCurrentUser().incrInteger("guesses")</exec>
-			<if cond="asInteger(event:sem:number) == number">
-				<agent:say>
-					<expr>event:sem:number</expr> 
-					is correct, you only needed 
-					<expr>system.getCurrentUser():guesses</expr>
-					guesses.
-				</agent:say>
-				<goto state="CheckAgain"/>
-			<else/>	
-				<if cond="asInteger(event:sem:number) &gt; number">
-					<agent:say><expr>event:sem:number</expr> is too high.</agent:say>
-					<else/>
-					<agent:say><expr>event:sem:number</expr> is too low.</agent:say>
-				</if>
-				<if cond="system.hasManyUsers()">	
-					<random>
-						<agent:attendOther/>
-						<agent:attendAll/>
-					</random>
-				</if>
-				<reentry/>
-			</if>
-		</onevent>
 	</state>
+
 	
 	<state id="CheckAgain" extends="Dialog">
 		<onentry>
@@ -83,7 +68,7 @@
 		</onentry>
 		<onevent name="sense.user.speak" cond="event?:sem:yes">
 			<agent:say>Okay, let's play again.</agent:say>
-			<goto state="Start"/>
+			<goto state="PackIntro"/>
 		</onevent>
 		<onevent name="sense.user.speak" cond="event?:sem:no">
 			<agent:say>Okay, goodbye</agent:say>
@@ -116,7 +101,7 @@
 		<onevent name="sense.user.leave" cond="system.isAttending(event)">
 			<if cond="system.hasUsers()">
 				<agent:attendRandom/>
-				<goto state="Guess" />
+				<!-- <goto state="Guess" /> -->
 			<else />
 				<goto state="Idle"/>
 			</if>

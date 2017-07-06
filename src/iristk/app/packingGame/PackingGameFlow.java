@@ -13,10 +13,13 @@ public class PackingGameFlow extends iristk.flow.Flow {
 
 	private iristk.situated.SystemAgentFlow agent;
 	private iristk.situated.SystemAgent system;
-	private Integer number;
+	private java.util.LinkedList<String> packingList;
+	private java.util.TreeSet<String> packables;
 
 	private void initVariables() {
 		system = (iristk.situated.SystemAgent) agent.getSystemAgent();
+		packingList = (java.util.LinkedList<String>) new java.util.LinkedList<String>();
+		packables = (java.util.TreeSet<String>) new java.util.TreeSet<String >();
 	}
 
 	public iristk.situated.SystemAgent getSystem() {
@@ -27,12 +30,20 @@ public class PackingGameFlow extends iristk.flow.Flow {
 		this.system = value;
 	}
 
-	public Integer getNumber() {
-		return this.number;
+	public java.util.LinkedList<String> getPackingList() {
+		return this.packingList;
 	}
 
-	public void setNumber(Integer value) {
-		this.number = value;
+	public void setPackingList(java.util.LinkedList<String> value) {
+		this.packingList = value;
+	}
+
+	public java.util.TreeSet<String> getPackables() {
+		return this.packables;
+	}
+
+	public void setPackables(java.util.TreeSet<String> value) {
+		this.packables = value;
 	}
 
 	public iristk.situated.SystemAgentFlow getAgent() {
@@ -42,7 +53,8 @@ public class PackingGameFlow extends iristk.flow.Flow {
 	@Override
 	public Object getVariable(String name) {
 		if (name.equals("system")) return this.system;
-		if (name.equals("number")) return this.number;
+		if (name.equals("packingList")) return this.packingList;
+		if (name.equals("packables")) return this.packables;
 		if (name.equals("agent")) return this.agent;
 		return null;
 	}
@@ -55,6 +67,52 @@ public class PackingGameFlow extends iristk.flow.Flow {
 
 	@Override
 	public State getInitialState() {return new Idle();}
+
+
+	private class SetUp extends State {
+
+		final State currentState = this;
+
+
+		@Override
+		public void setFlowThread(FlowRunner.FlowThread flowThread) {
+			super.setFlowThread(flowThread);
+		}
+
+		@Override
+		public void onentry() throws Exception {
+			int eventResult;
+			Event event = new Event("state.enter");
+			// Line: 15
+			try {
+				EXECUTION: {
+					int count = getCount(1212899836) + 1;
+					incrCount(1212899836);
+					// Line: 16
+					packables.add("a hat"); packables.add("a pair of shoes");
+					// Line: 17
+					Idle state0 = new Idle();
+					flowThread.gotoState(state0, currentState, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 17, 24)));
+					eventResult = EVENT_ABORTED;
+					break EXECUTION;
+				}
+			} catch (Exception e) {
+				throw new FlowException(e, currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 15, 12));
+			}
+		}
+
+		@Override
+		public int onFlowEvent(Event event) throws Exception {
+			int eventResult;
+			int count;
+			eventResult = super.onFlowEvent(event);
+			if (eventResult != EVENT_IGNORED) return eventResult;
+			eventResult = callerHandlers(event);
+			if (eventResult != EVENT_IGNORED) return eventResult;
+			return EVENT_IGNORED;
+		}
+
+	}
 
 
 	public class Idle extends Dialog implements Initial {
@@ -71,34 +129,34 @@ public class PackingGameFlow extends iristk.flow.Flow {
 		public void onentry() throws Exception {
 			int eventResult;
 			Event event = new Event("state.enter");
-			// Line: 14
+			// Line: 22
 			try {
 				EXECUTION: {
-					int count = getCount(1347137144) + 1;
-					incrCount(1347137144);
-					// Line: 15
+					int count = getCount(1607460018) + 1;
+					incrCount(1607460018);
+					// Line: 23
 					if (system.hasUsers()) {
-						iristk.situated.SystemAgentFlow.attendRandom state0 = agent.new attendRandom();
-						if (!flowThread.callState(state0, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 15, 33)))) {
+						iristk.situated.SystemAgentFlow.attendRandom state1 = agent.new attendRandom();
+						if (!flowThread.callState(state1, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 23, 33)))) {
 							eventResult = EVENT_ABORTED;
 							break EXECUTION;
 						}
-						// Line: 17
-						Greeting state1 = new Greeting();
-						flowThread.gotoState(state1, currentState, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 17, 29)));
+						// Line: 25
+						Greeting state2 = new Greeting();
+						flowThread.gotoState(state2, currentState, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 25, 29)));
 						eventResult = EVENT_ABORTED;
 						break EXECUTION;
-						// Line: 18
+						// Line: 26
 					} else {
-						iristk.situated.SystemAgentFlow.attendNobody state2 = agent.new attendNobody();
-						if (!flowThread.callState(state2, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 15, 33)))) {
+						iristk.situated.SystemAgentFlow.attendNobody state3 = agent.new attendNobody();
+						if (!flowThread.callState(state3, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 23, 33)))) {
 							eventResult = EVENT_ABORTED;
 							break EXECUTION;
 						}
 					}
 				}
 			} catch (Exception e) {
-				throw new FlowException(e, currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 14, 12));
+				throw new FlowException(e, currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 22, 12));
 			}
 		}
 
@@ -106,29 +164,29 @@ public class PackingGameFlow extends iristk.flow.Flow {
 		public int onFlowEvent(Event event) throws Exception {
 			int eventResult;
 			int count;
-			// Line: 22
+			// Line: 30
 			try {
-				count = getCount(1289696681) + 1;
+				count = getCount(245565335) + 1;
 				if (event.triggers("sense.user.enter")) {
-					incrCount(1289696681);
+					incrCount(245565335);
 					eventResult = EVENT_CONSUMED;
 					EXECUTION: {
-						iristk.situated.SystemAgentFlow.attend state3 = agent.new attend();
-						state3.setTarget(event.get("user"));
-						if (!flowThread.callState(state3, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 22, 36)))) {
+						iristk.situated.SystemAgentFlow.attend state4 = agent.new attend();
+						state4.setTarget(event.get("user"));
+						if (!flowThread.callState(state4, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 30, 36)))) {
 							eventResult = EVENT_ABORTED;
 							break EXECUTION;
 						}
-						// Line: 24
-						Greeting state4 = new Greeting();
-						flowThread.gotoState(state4, currentState, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 24, 28)));
+						// Line: 32
+						Greeting state5 = new Greeting();
+						flowThread.gotoState(state5, currentState, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 32, 28)));
 						eventResult = EVENT_ABORTED;
 						break EXECUTION;
 					}
 					if (eventResult != EVENT_IGNORED) return eventResult;
 				}
 			} catch (Exception e) {
-				throw new FlowException(e, currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 22, 36));
+				throw new FlowException(e, currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 30, 36));
 			}
 			eventResult = super.onFlowEvent(event);
 			if (eventResult != EVENT_IGNORED) return eventResult;
@@ -154,252 +212,179 @@ public class PackingGameFlow extends iristk.flow.Flow {
 		public void onentry() throws Exception {
 			int eventResult;
 			Event event = new Event("state.enter");
-			// Line: 29
+			// Line: 37
 			try {
 				EXECUTION: {
-					int count = getCount(1811075214) + 1;
-					incrCount(1811075214);
-					iristk.situated.SystemAgentFlow.say state5 = agent.new say();
-					StringCreator string6 = new StringCreator();
-					string6.append("Hi there, let's play a game");
-					state5.setText(string6.toString());
-					if (!flowThread.callState(state5, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 29, 12)))) {
-						eventResult = EVENT_ABORTED;
-						break EXECUTION;
-					}
-					// Line: 31
-					Start state7 = new Start();
-					flowThread.gotoState(state7, currentState, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 31, 25)));
-					eventResult = EVENT_ABORTED;
-					break EXECUTION;
-				}
-			} catch (Exception e) {
-				throw new FlowException(e, currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 29, 12));
-			}
-		}
-
-		@Override
-		public int onFlowEvent(Event event) throws Exception {
-			int eventResult;
-			int count;
-			eventResult = super.onFlowEvent(event);
-			if (eventResult != EVENT_IGNORED) return eventResult;
-			eventResult = callerHandlers(event);
-			if (eventResult != EVENT_IGNORED) return eventResult;
-			return EVENT_IGNORED;
-		}
-
-	}
-
-
-	private class Start extends Dialog {
-
-		final State currentState = this;
-
-
-		@Override
-		public void setFlowThread(FlowRunner.FlowThread flowThread) {
-			super.setFlowThread(flowThread);
-		}
-
-		@Override
-		public void onentry() throws Exception {
-			int eventResult;
-			Event event = new Event("state.enter");
-			// Line: 36
-			try {
-				EXECUTION: {
-					int count = getCount(1940447180) + 1;
-					incrCount(1940447180);
-					// Line: 37
-					number = new java.util.Random().nextInt(10) + 1;
+					int count = getCount(183264084) + 1;
+					incrCount(183264084);
 					// Line: 38
-					system.putUsers("guesses", 0);
-					iristk.situated.SystemAgentFlow.say state8 = agent.new say();
-					StringCreator string9 = new StringCreator();
-					string9.append("I am thinking of a number between 1 and 10.");
-					state8.setText(string9.toString());
-					if (!flowThread.callState(state8, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 36, 12)))) {
-						eventResult = EVENT_ABORTED;
-						break EXECUTION;
-					}
-					// Line: 40
-					Guess state10 = new Guess();
-					flowThread.gotoState(state10, currentState, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 40, 25)));
-					eventResult = EVENT_ABORTED;
-					break EXECUTION;
-				}
-			} catch (Exception e) {
-				throw new FlowException(e, currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 36, 12));
-			}
-		}
-
-		@Override
-		public int onFlowEvent(Event event) throws Exception {
-			int eventResult;
-			int count;
-			eventResult = super.onFlowEvent(event);
-			if (eventResult != EVENT_IGNORED) return eventResult;
-			eventResult = callerHandlers(event);
-			if (eventResult != EVENT_IGNORED) return eventResult;
-			return EVENT_IGNORED;
-		}
-
-	}
-
-
-	private class Guess extends Dialog {
-
-		final State currentState = this;
-
-
-		@Override
-		public void setFlowThread(FlowRunner.FlowThread flowThread) {
-			super.setFlowThread(flowThread);
-		}
-
-		@Override
-		public void onentry() throws Exception {
-			int eventResult;
-			Event event = new Event("state.enter");
-			// Line: 45
-			try {
-				EXECUTION: {
-					int count = getCount(476402209) + 1;
-					incrCount(476402209);
-					iristk.situated.SystemAgentFlow.say state11 = agent.new say();
-					StringCreator string12 = new StringCreator();
-					string12.append("What is your guess?");
-					state11.setText(string12.toString());
-					if (!flowThread.callState(state11, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 45, 12)))) {
-						eventResult = EVENT_ABORTED;
-						break EXECUTION;
-					}
-					iristk.situated.SystemAgentFlow.listen state13 = agent.new listen();
-					if (!flowThread.callState(state13, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 45, 12)))) {
-						eventResult = EVENT_ABORTED;
-						break EXECUTION;
-					}
-				}
-			} catch (Exception e) {
-				throw new FlowException(e, currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 45, 12));
-			}
-		}
-
-		@Override
-		public int onFlowEvent(Event event) throws Exception {
-			int eventResult;
-			int count;
-			// Line: 49
-			try {
-				count = getCount(1490180672) + 1;
-				if (event.triggers("sense.user.speak")) {
-					if (event.has("sem:number")) {
-						incrCount(1490180672);
-						eventResult = EVENT_CONSUMED;
-						EXECUTION: {
-							// Line: 50
-							if (system.isAttendingAll()) {
-								iristk.situated.SystemAgentFlow.attend state14 = agent.new attend();
-								state14.setTarget(event.get("user"));
-								if (!flowThread.callState(state14, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 50, 39)))) {
+					boolean chosen6 = false;
+					boolean matching7 = true;
+					while (!chosen6 && matching7) {
+						int rand8 = random(476402209, 3, iristk.util.RandomList.RandomModel.DECK_RESHUFFLE_NOREPEAT);
+						matching7 = false;
+						if (true) {
+							matching7 = true;
+							if (rand8 >= 0 && rand8 < 1) {
+								chosen6 = true;
+								iristk.situated.SystemAgentFlow.say state9 = agent.new say();
+								StringCreator string10 = new StringCreator();
+								string10.append("Greetings! Do you want to play with me?");
+								state9.setText(string10.toString());
+								state9.setGesture("smile");
+								if (!flowThread.callState(state9, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 38, 12)))) {
 									eventResult = EVENT_ABORTED;
 									break EXECUTION;
 								}
-							}
-							// Line: 53
-							system.getCurrentUser().incrInteger("guesses");
-							// Line: 54
-							if (asInteger(event.get("sem:number")) == number) {
-								iristk.situated.SystemAgentFlow.say state15 = agent.new say();
-								StringCreator string16 = new StringCreator();
-								// Line: 54
-								string16.append(event.get("sem:number"));
-								string16.append("is correct, you only needed");
-								// Line: 54
-								string16.append(system.getCurrentUser().get("guesses"));
-								string16.append("guesses.");
-								state15.setText(string16.toString());
-								if (!flowThread.callState(state15, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 54, 53)))) {
-									eventResult = EVENT_ABORTED;
-									break EXECUTION;
-								}
-								// Line: 61
-								CheckAgain state17 = new CheckAgain();
-								flowThread.gotoState(state17, currentState, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 61, 31)));
-								eventResult = EVENT_ABORTED;
-								break EXECUTION;
-								// Line: 62
-							} else {
-								// Line: 63
-								if (asInteger(event.get("sem:number")) > number) {
-									iristk.situated.SystemAgentFlow.say state18 = agent.new say();
-									StringCreator string19 = new StringCreator();
-									// Line: 63
-									string19.append(event.get("sem:number"));
-									string19.append("is too high.");
-									state18.setText(string19.toString());
-									if (!flowThread.callState(state18, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 63, 56)))) {
-										eventResult = EVENT_ABORTED;
-										break EXECUTION;
-									}
-									// Line: 65
-								} else {
-									iristk.situated.SystemAgentFlow.say state20 = agent.new say();
-									StringCreator string21 = new StringCreator();
-									// Line: 65
-									string21.append(event.get("sem:number"));
-									string21.append("is too low.");
-									state20.setText(string21.toString());
-									if (!flowThread.callState(state20, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 63, 56)))) {
-										eventResult = EVENT_ABORTED;
-										break EXECUTION;
-									}
-								}
-								// Line: 68
-								if (system.hasManyUsers()) {
-									// Line: 69
-									boolean chosen22 = false;
-									boolean matching23 = true;
-									while (!chosen22 && matching23) {
-										int rand24 = random(2143192188, 2, iristk.util.RandomList.RandomModel.DECK_RESHUFFLE_NOREPEAT);
-										matching23 = false;
-										if (true) {
-											matching23 = true;
-											if (rand24 >= 0 && rand24 < 1) {
-												chosen22 = true;
-												iristk.situated.SystemAgentFlow.attendOther state25 = agent.new attendOther();
-												if (!flowThread.callState(state25, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 69, 14)))) {
-													eventResult = EVENT_ABORTED;
-													break EXECUTION;
-												}
-											}
-										}
-										if (true) {
-											matching23 = true;
-											if (rand24 >= 1 && rand24 < 2) {
-												chosen22 = true;
-												iristk.situated.SystemAgentFlow.attendAll state26 = agent.new attendAll();
-												if (!flowThread.callState(state26, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 69, 14)))) {
-													eventResult = EVENT_ABORTED;
-													break EXECUTION;
-												}
-											}
-										}
-									}
-								}
-								// Line: 74
-								flowThread.reentryState(this, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 74, 15)));
-								eventResult = EVENT_ABORTED;
-								break EXECUTION;
 							}
 						}
-						if (eventResult != EVENT_IGNORED) return eventResult;
+						if (true) {
+							matching7 = true;
+							if (rand8 >= 1 && rand8 < 2) {
+								chosen6 = true;
+								iristk.situated.SystemAgentFlow.say state11 = agent.new say();
+								StringCreator string12 = new StringCreator();
+								string12.append("Hi I am Furhat! Let's play a game.");
+								state11.setText(string12.toString());
+								state11.setGesture("smile");
+								if (!flowThread.callState(state11, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 38, 12)))) {
+									eventResult = EVENT_ABORTED;
+									break EXECUTION;
+								}
+							}
+						}
+						if (true) {
+							matching7 = true;
+							if (rand8 >= 2 && rand8 < 3) {
+								chosen6 = true;
+								iristk.situated.SystemAgentFlow.say state13 = agent.new say();
+								StringCreator string14 = new StringCreator();
+								string14.append("Hey there! Let's play a game.");
+								state13.setText(string14.toString());
+								state13.setGesture("smile");
+								if (!flowThread.callState(state13, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 38, 12)))) {
+									eventResult = EVENT_ABORTED;
+									break EXECUTION;
+								}
+							}
+						}
+					}
+					// Line: 43
+					ExplainGame state15 = new ExplainGame();
+					flowThread.gotoState(state15, currentState, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 43, 31)));
+					eventResult = EVENT_ABORTED;
+					break EXECUTION;
+				}
+			} catch (Exception e) {
+				throw new FlowException(e, currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 37, 12));
+			}
+		}
+
+		@Override
+		public int onFlowEvent(Event event) throws Exception {
+			int eventResult;
+			int count;
+			eventResult = super.onFlowEvent(event);
+			if (eventResult != EVENT_IGNORED) return eventResult;
+			eventResult = callerHandlers(event);
+			if (eventResult != EVENT_IGNORED) return eventResult;
+			return EVENT_IGNORED;
+		}
+
+	}
+
+
+	private class ExplainGame extends Dialog {
+
+		final State currentState = this;
+
+
+		@Override
+		public void setFlowThread(FlowRunner.FlowThread flowThread) {
+			super.setFlowThread(flowThread);
+		}
+
+		@Override
+		public void onentry() throws Exception {
+			int eventResult;
+			Event event = new Event("state.enter");
+			// Line: 48
+			try {
+				EXECUTION: {
+					int count = getCount(1919892312) + 1;
+					incrCount(1919892312);
+					iristk.situated.SystemAgentFlow.say state16 = agent.new say();
+					StringCreator string17 = new StringCreator();
+					string17.append("I am going on holidays. I need to pack some stuff. Do you want to help?");
+					state16.setText(string17.toString());
+					if (!flowThread.callState(state16, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 48, 12)))) {
+						eventResult = EVENT_ABORTED;
+						break EXECUTION;
+					}
+					// Line: 50
+					PackIntro state18 = new PackIntro();
+					flowThread.gotoState(state18, currentState, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 50, 29)));
+					eventResult = EVENT_ABORTED;
+					break EXECUTION;
+				}
+			} catch (Exception e) {
+				throw new FlowException(e, currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 48, 12));
+			}
+		}
+
+		@Override
+		public int onFlowEvent(Event event) throws Exception {
+			int eventResult;
+			int count;
+			eventResult = super.onFlowEvent(event);
+			if (eventResult != EVENT_IGNORED) return eventResult;
+			eventResult = callerHandlers(event);
+			if (eventResult != EVENT_IGNORED) return eventResult;
+			return EVENT_IGNORED;
+		}
+
+	}
+
+
+	private class PackIntro extends Dialog {
+
+		final State currentState = this;
+
+
+		@Override
+		public void setFlowThread(FlowRunner.FlowThread flowThread) {
+			super.setFlowThread(flowThread);
+		}
+
+		@Override
+		public void onentry() throws Exception {
+			int eventResult;
+			Event event = new Event("state.enter");
+			// Line: 55
+			try {
+				EXECUTION: {
+					int count = getCount(358699161) + 1;
+					incrCount(358699161);
+					iristk.situated.SystemAgentFlow.say state19 = agent.new say();
+					StringCreator string20 = new StringCreator();
+					string20.append("I pack my bags and I take with me:");
+					// Line: 55
+					string20.append(packables.first());
+					state19.setText(string20.toString());
+					if (!flowThread.callState(state19, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 55, 12)))) {
+						eventResult = EVENT_ABORTED;
+						break EXECUTION;
 					}
 				}
 			} catch (Exception e) {
-				throw new FlowException(e, currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 49, 61));
+				throw new FlowException(e, currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 55, 12));
 			}
+		}
+
+		@Override
+		public int onFlowEvent(Event event) throws Exception {
+			int eventResult;
+			int count;
 			eventResult = super.onFlowEvent(event);
 			if (eventResult != EVENT_IGNORED) return eventResult;
 			eventResult = callerHandlers(event);
@@ -424,27 +409,27 @@ public class PackingGameFlow extends iristk.flow.Flow {
 		public void onentry() throws Exception {
 			int eventResult;
 			Event event = new Event("state.enter");
-			// Line: 80
+			// Line: 65
 			try {
 				EXECUTION: {
-					int count = getCount(231685785) + 1;
-					incrCount(231685785);
-					iristk.situated.SystemAgentFlow.say state27 = agent.new say();
-					StringCreator string28 = new StringCreator();
-					string28.append("Do you want to play again?");
-					state27.setText(string28.toString());
-					if (!flowThread.callState(state27, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 80, 12)))) {
+					int count = getCount(110718392) + 1;
+					incrCount(110718392);
+					iristk.situated.SystemAgentFlow.say state21 = agent.new say();
+					StringCreator string22 = new StringCreator();
+					string22.append("Do you want to play again?");
+					state21.setText(string22.toString());
+					if (!flowThread.callState(state21, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 65, 12)))) {
 						eventResult = EVENT_ABORTED;
 						break EXECUTION;
 					}
-					iristk.situated.SystemAgentFlow.listen state29 = agent.new listen();
-					if (!flowThread.callState(state29, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 80, 12)))) {
+					iristk.situated.SystemAgentFlow.listen state23 = agent.new listen();
+					if (!flowThread.callState(state23, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 65, 12)))) {
 						eventResult = EVENT_ABORTED;
 						break EXECUTION;
 					}
 				}
 			} catch (Exception e) {
-				throw new FlowException(e, currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 80, 12));
+				throw new FlowException(e, currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 65, 12));
 			}
 		}
 
@@ -452,25 +437,25 @@ public class PackingGameFlow extends iristk.flow.Flow {
 		public int onFlowEvent(Event event) throws Exception {
 			int eventResult;
 			int count;
-			// Line: 84
+			// Line: 69
 			try {
-				count = getCount(2110121908) + 1;
+				count = getCount(425918570) + 1;
 				if (event.triggers("sense.user.speak")) {
 					if (event.has("sem:yes")) {
-						incrCount(2110121908);
+						incrCount(425918570);
 						eventResult = EVENT_CONSUMED;
 						EXECUTION: {
-							iristk.situated.SystemAgentFlow.say state30 = agent.new say();
-							StringCreator string31 = new StringCreator();
-							string31.append("Okay, let's play again.");
-							state30.setText(string31.toString());
-							if (!flowThread.callState(state30, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 84, 58)))) {
+							iristk.situated.SystemAgentFlow.say state24 = agent.new say();
+							StringCreator string25 = new StringCreator();
+							string25.append("Okay, let's play again.");
+							state24.setText(string25.toString());
+							if (!flowThread.callState(state24, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 69, 58)))) {
 								eventResult = EVENT_ABORTED;
 								break EXECUTION;
 							}
-							// Line: 86
-							Start state32 = new Start();
-							flowThread.gotoState(state32, currentState, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 86, 25)));
+							// Line: 71
+							PackIntro state26 = new PackIntro();
+							flowThread.gotoState(state26, currentState, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 71, 29)));
 							eventResult = EVENT_ABORTED;
 							break EXECUTION;
 						}
@@ -478,27 +463,27 @@ public class PackingGameFlow extends iristk.flow.Flow {
 					}
 				}
 			} catch (Exception e) {
-				throw new FlowException(e, currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 84, 58));
+				throw new FlowException(e, currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 69, 58));
 			}
-			// Line: 88
+			// Line: 73
 			try {
-				count = getCount(1023487453) + 1;
+				count = getCount(1100439041) + 1;
 				if (event.triggers("sense.user.speak")) {
 					if (event.has("sem:no")) {
-						incrCount(1023487453);
+						incrCount(1100439041);
 						eventResult = EVENT_CONSUMED;
 						EXECUTION: {
-							iristk.situated.SystemAgentFlow.say state33 = agent.new say();
-							StringCreator string34 = new StringCreator();
-							string34.append("Okay, goodbye");
-							state33.setText(string34.toString());
-							if (!flowThread.callState(state33, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 88, 57)))) {
+							iristk.situated.SystemAgentFlow.say state27 = agent.new say();
+							StringCreator string28 = new StringCreator();
+							string28.append("Okay, goodbye");
+							state27.setText(string28.toString());
+							if (!flowThread.callState(state27, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 73, 57)))) {
 								eventResult = EVENT_ABORTED;
 								break EXECUTION;
 							}
-							// Line: 90
-							Idle state35 = new Idle();
-							flowThread.gotoState(state35, currentState, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 90, 24)));
+							// Line: 75
+							Idle state29 = new Idle();
+							flowThread.gotoState(state29, currentState, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 75, 24)));
 							eventResult = EVENT_ABORTED;
 							break EXECUTION;
 						}
@@ -506,7 +491,7 @@ public class PackingGameFlow extends iristk.flow.Flow {
 					}
 				}
 			} catch (Exception e) {
-				throw new FlowException(e, currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 88, 57));
+				throw new FlowException(e, currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 73, 57));
 			}
 			eventResult = super.onFlowEvent(event);
 			if (eventResult != EVENT_IGNORED) return eventResult;
@@ -538,17 +523,17 @@ public class PackingGameFlow extends iristk.flow.Flow {
 		public int onFlowEvent(Event event) throws Exception {
 			int eventResult;
 			int count;
-			// Line: 95
+			// Line: 80
 			try {
-				count = getCount(1694819250) + 1;
+				count = getCount(114935352) + 1;
 				if (event.triggers("sense.user.speech.start")) {
 					if (system.isAttending(event) && eq(event.get("speakers"), 1)) {
-						incrCount(1694819250);
+						incrCount(114935352);
 						eventResult = EVENT_CONSUMED;
 						EXECUTION: {
-							iristk.situated.SystemAgentFlow.gesture state36 = agent.new gesture();
-							state36.setName("smile");
-							if (!flowThread.callState(state36, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 95, 102)))) {
+							iristk.situated.SystemAgentFlow.gesture state30 = agent.new gesture();
+							state30.setName("smile");
+							if (!flowThread.callState(state30, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 80, 102)))) {
 								eventResult = EVENT_ABORTED;
 								break EXECUTION;
 							}
@@ -557,145 +542,140 @@ public class PackingGameFlow extends iristk.flow.Flow {
 					}
 				}
 			} catch (Exception e) {
-				throw new FlowException(e, currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 95, 102));
+				throw new FlowException(e, currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 80, 102));
 			}
-			// Line: 98
+			// Line: 83
 			try {
-				count = getCount(1365202186) + 1;
+				count = getCount(2110121908) + 1;
 				if (event.triggers("sense.user.speak")) {
-					incrCount(1365202186);
+					incrCount(2110121908);
+					eventResult = EVENT_CONSUMED;
+					EXECUTION: {
+						iristk.situated.SystemAgentFlow.say state31 = agent.new say();
+						StringCreator string32 = new StringCreator();
+						string32.append("Sorry, I didn't get that.");
+						state31.setText(string32.toString());
+						if (!flowThread.callState(state31, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 83, 36)))) {
+							eventResult = EVENT_ABORTED;
+							break EXECUTION;
+						}
+						// Line: 85
+						flowThread.reentryState(this, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 85, 14)));
+						eventResult = EVENT_ABORTED;
+						break EXECUTION;
+					}
+					if (eventResult != EVENT_IGNORED) return eventResult;
+				}
+			} catch (Exception e) {
+				throw new FlowException(e, currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 83, 36));
+			}
+			// Line: 87
+			try {
+				count = getCount(1973538135) + 1;
+				if (event.triggers("sense.user.speak.side")) {
+					incrCount(1973538135);
+					eventResult = EVENT_CONSUMED;
+					EXECUTION: {
+						iristk.situated.SystemAgentFlow.attendOther state33 = agent.new attendOther();
+						state33.setMode("eyes");
+						if (!flowThread.callState(state33, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 87, 41)))) {
+							eventResult = EVENT_ABORTED;
+							break EXECUTION;
+						}
+						iristk.situated.SystemAgentFlow.say state34 = agent.new say();
+						StringCreator string35 = new StringCreator();
+						string35.append("I didn't ask you.");
+						state34.setText(string35.toString());
+						if (!flowThread.callState(state34, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 87, 41)))) {
+							eventResult = EVENT_ABORTED;
+							break EXECUTION;
+						}
+						iristk.situated.SystemAgentFlow.attendOther state36 = agent.new attendOther();
+						state36.setMode("eyes");
+						if (!flowThread.callState(state36, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 87, 41)))) {
+							eventResult = EVENT_ABORTED;
+							break EXECUTION;
+						}
+						// Line: 91
+						flowThread.reentryState(this, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 91, 14)));
+						eventResult = EVENT_ABORTED;
+						break EXECUTION;
+					}
+					if (eventResult != EVENT_IGNORED) return eventResult;
+				}
+			} catch (Exception e) {
+				throw new FlowException(e, currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 87, 41));
+			}
+			// Line: 93
+			try {
+				count = getCount(1694819250) + 1;
+				if (event.triggers("sense.user.speak.multi")) {
+					incrCount(1694819250);
 					eventResult = EVENT_CONSUMED;
 					EXECUTION: {
 						iristk.situated.SystemAgentFlow.say state37 = agent.new say();
 						StringCreator string38 = new StringCreator();
-						string38.append("Sorry, I didn't get that.");
+						string38.append("Don't speak at the same time.");
 						state37.setText(string38.toString());
-						if (!flowThread.callState(state37, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 98, 36)))) {
+						if (!flowThread.callState(state37, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 93, 42)))) {
 							eventResult = EVENT_ABORTED;
 							break EXECUTION;
 						}
-						// Line: 100
-						flowThread.reentryState(this, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 100, 14)));
+						// Line: 95
+						flowThread.reentryState(this, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 95, 14)));
 						eventResult = EVENT_ABORTED;
 						break EXECUTION;
 					}
 					if (eventResult != EVENT_IGNORED) return eventResult;
 				}
 			} catch (Exception e) {
-				throw new FlowException(e, currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 98, 36));
+				throw new FlowException(e, currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 93, 42));
 			}
-			// Line: 102
+			// Line: 97
 			try {
-				count = getCount(1586600255) + 1;
-				if (event.triggers("sense.user.speak.side")) {
-					incrCount(1586600255);
-					eventResult = EVENT_CONSUMED;
-					EXECUTION: {
-						iristk.situated.SystemAgentFlow.attendOther state39 = agent.new attendOther();
-						state39.setMode("eyes");
-						if (!flowThread.callState(state39, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 102, 41)))) {
-							eventResult = EVENT_ABORTED;
-							break EXECUTION;
-						}
-						iristk.situated.SystemAgentFlow.say state40 = agent.new say();
-						StringCreator string41 = new StringCreator();
-						string41.append("I didn't ask you.");
-						state40.setText(string41.toString());
-						if (!flowThread.callState(state40, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 102, 41)))) {
-							eventResult = EVENT_ABORTED;
-							break EXECUTION;
-						}
-						iristk.situated.SystemAgentFlow.attendOther state42 = agent.new attendOther();
-						state42.setMode("eyes");
-						if (!flowThread.callState(state42, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 102, 41)))) {
-							eventResult = EVENT_ABORTED;
-							break EXECUTION;
-						}
-						// Line: 106
-						flowThread.reentryState(this, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 106, 14)));
-						eventResult = EVENT_ABORTED;
-						break EXECUTION;
-					}
-					if (eventResult != EVENT_IGNORED) return eventResult;
-				}
-			} catch (Exception e) {
-				throw new FlowException(e, currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 102, 41));
-			}
-			// Line: 108
-			try {
-				count = getCount(932583850) + 1;
-				if (event.triggers("sense.user.speak.multi")) {
-					incrCount(932583850);
-					eventResult = EVENT_CONSUMED;
-					EXECUTION: {
-						iristk.situated.SystemAgentFlow.say state43 = agent.new say();
-						StringCreator string44 = new StringCreator();
-						string44.append("Don't speak at the same time.");
-						state43.setText(string44.toString());
-						if (!flowThread.callState(state43, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 108, 42)))) {
-							eventResult = EVENT_ABORTED;
-							break EXECUTION;
-						}
-						// Line: 110
-						flowThread.reentryState(this, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 110, 14)));
-						eventResult = EVENT_ABORTED;
-						break EXECUTION;
-					}
-					if (eventResult != EVENT_IGNORED) return eventResult;
-				}
-			} catch (Exception e) {
-				throw new FlowException(e, currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 108, 42));
-			}
-			// Line: 112
-			try {
-				count = getCount(1579572132) + 1;
+				count = getCount(1651191114) + 1;
 				if (event.triggers("sense.user.silence")) {
-					incrCount(1579572132);
+					incrCount(1651191114);
 					eventResult = EVENT_CONSUMED;
 					EXECUTION: {
-						iristk.situated.SystemAgentFlow.say state45 = agent.new say();
-						StringCreator string46 = new StringCreator();
-						string46.append("Sorry, I didn't hear anything.");
-						state45.setText(string46.toString());
-						if (!flowThread.callState(state45, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 112, 38)))) {
+						iristk.situated.SystemAgentFlow.say state39 = agent.new say();
+						StringCreator string40 = new StringCreator();
+						string40.append("Sorry, I didn't hear anything.");
+						state39.setText(string40.toString());
+						if (!flowThread.callState(state39, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 97, 38)))) {
 							eventResult = EVENT_ABORTED;
 							break EXECUTION;
 						}
-						// Line: 114
-						flowThread.reentryState(this, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 114, 14)));
+						// Line: 99
+						flowThread.reentryState(this, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 99, 14)));
 						eventResult = EVENT_ABORTED;
 						break EXECUTION;
 					}
 					if (eventResult != EVENT_IGNORED) return eventResult;
 				}
 			} catch (Exception e) {
-				throw new FlowException(e, currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 112, 38));
+				throw new FlowException(e, currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 97, 38));
 			}
-			// Line: 116
+			// Line: 101
 			try {
-				count = getCount(305808283) + 1;
+				count = getCount(474675244) + 1;
 				if (event.triggers("sense.user.leave")) {
 					if (system.isAttending(event)) {
-						incrCount(305808283);
+						incrCount(474675244);
 						eventResult = EVENT_CONSUMED;
 						EXECUTION: {
-							// Line: 117
+							// Line: 102
 							if (system.hasUsers()) {
-								iristk.situated.SystemAgentFlow.attendRandom state47 = agent.new attendRandom();
-								if (!flowThread.callState(state47, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 117, 33)))) {
+								iristk.situated.SystemAgentFlow.attendRandom state41 = agent.new attendRandom();
+								if (!flowThread.callState(state41, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 102, 33)))) {
 									eventResult = EVENT_ABORTED;
 									break EXECUTION;
 								}
-								// Line: 119
-								Guess state48 = new Guess();
-								flowThread.gotoState(state48, currentState, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 119, 27)));
-								eventResult = EVENT_ABORTED;
-								break EXECUTION;
-								// Line: 120
+								// Line: 105
 							} else {
-								// Line: 121
-								Idle state49 = new Idle();
-								flowThread.gotoState(state49, currentState, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 121, 25)));
+								// Line: 106
+								Idle state42 = new Idle();
+								flowThread.gotoState(state42, currentState, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 106, 25)));
 								eventResult = EVENT_ABORTED;
 								break EXECUTION;
 							}
@@ -704,24 +684,24 @@ public class PackingGameFlow extends iristk.flow.Flow {
 					}
 				}
 			} catch (Exception e) {
-				throw new FlowException(e, currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 116, 69));
+				throw new FlowException(e, currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 101, 69));
 			}
-			// Line: 124
+			// Line: 109
 			try {
-				count = getCount(405662939) + 1;
+				count = getCount(359023572) + 1;
 				if (event.triggers("repeat")) {
-					incrCount(405662939);
+					incrCount(359023572);
 					eventResult = EVENT_CONSUMED;
 					EXECUTION: {
-						// Line: 125
-						flowThread.reentryState(this, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 125, 14)));
+						// Line: 110
+						flowThread.reentryState(this, new FlowEventInfo(currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 110, 14)));
 						eventResult = EVENT_ABORTED;
 						break EXECUTION;
 					}
 					if (eventResult != EVENT_IGNORED) return eventResult;
 				}
 			} catch (Exception e) {
-				throw new FlowException(e, currentState, event, new XMLLocation(new File("C:\\Dropbox\\iristk\\templates\\situated_dialog\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 124, 26));
+				throw new FlowException(e, currentState, event, new XMLLocation(new File("C:\\Users\\cynthia\\IrisTK\\app\\packingGame\\src\\iristk\\app\\packingGame\\PackingGameFlow.xml"), 109, 26));
 			}
 			eventResult = super.onFlowEvent(event);
 			if (eventResult != EVENT_IGNORED) return eventResult;

@@ -35,8 +35,8 @@ public class PackingGameSystem {
 		
 		//system.setupKinect();
 		
-		//system.setupMonoMicrophone(new WindowsRecognizerFactory());
-		system.setupStereoMicrophones(new WindowsRecognizerFactory());
+		system.setupMonoMicrophone(new WindowsRecognizerFactory());
+		//system.setupStereoMicrophones(new WindowsRecognizerFactory());
 		//system.setupKinectMicrophone(new KinectRecognizerFactory());
 				
 		//system.connectToBroker("furhat", "127.0.0.1");
