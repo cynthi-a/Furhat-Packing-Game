@@ -1,0 +1,8 @@
+hat
+belt
+comb
+bathing suit
+towel
+toothbrush
+laptop
+phone

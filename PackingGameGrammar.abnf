@@ -1,0 +1,11 @@
+IrisTK version 2017.01.27 at C:\Users\cynthia\IrisTK
+
+#ABNF 1.0 UTF-8;
+
+language en-US;
+root $root;
+
+public $root = ((I pack my bag and I take with me [a] [pair of] $PACKABLES {out.packables=rules.packables}) | (yes {out.yes=1}) | (no {out.no=1}));
+
+$PACKABLES = ((hat) | (belt) | (comb) | (bathing suit) | (towel) | (toothbrush) | (laptop) | (cell phone) | (shoes));
+

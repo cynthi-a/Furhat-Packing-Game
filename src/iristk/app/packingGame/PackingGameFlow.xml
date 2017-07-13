@@ -8,16 +8,28 @@
 	<import class="java.util.LinkedList"/>
 	<import class="java.util.TreeSet"/>
 	
-	<param name="agent" type="iristk.situated.SystemAgentFlow"/>
+<!-- 	<param name="agent" type="iristk.situated.SystemAgentFlow"/> -->
+	<param name="packables" type="TreeSet&lt;String &gt;"/>
 	
 	<var name="system" type="iristk.situated.SystemAgent" value="agent.getSystemAgent()"/> 
 
 	<var name="packingList" type="List&lt;String&gt;" value = "new java.util.LinkedList&lt;String&gt;()"/>
+	
 	<var name="packables" type="TreeSet&lt;String &gt;" value="new java.util.TreeSet&lt;String&gt;()"/>
 	
 	<state id="SetUp">
 		<onentry>
-			<exec>packables.add("a hat"); packables.add("a pair of shoes"); System.out.println(packables.first())</exec>
+			<exec>
+				packables.add("hat");
+				packables.add("shoes");
+				packables.add("hat");
+				packables.add("belt");
+				packables.add("comb");
+				packables.add("towel");
+				packables.add("bathing suit");
+				packables.add("laptop");
+				packables.add("cell phone");
+			</exec>
 			<goto state="Idle"/>
 		</onentry>
 	</state>
@@ -48,20 +60,58 @@
 		</onentry>
 	</state>
 	
+<!-- 	<state id = "AskName" extends="Dialog">
+		<onentry>
+			<agent:say>What is your name</agent:say>
+		</onentry>
+		<onevent name="sense.user.speak">
+			<if cond="event?sem:yoda">
+				<dialog:say>yoda <expr>event:text</expr></dialog:say>
+			</if>
+			<else/>
+				<dialog:say><expr>event:text</expr></dialog:say>
+			<reentry/>
+		</onevent>
+	</state> -->
+	
 		<state id="ExplainGame" extends="Dialog">
 		<onentry>
 			<agent:say>I am going on holidays. I need to pack some stuff. Do you want to help?</agent:say>
 			<goto state="PackIntro"/>
 		</onentry>
+<!-- 		<onevent name="sense.user.speak" cond="event?:sem:yes">
+			<agent:say>Okay, let's play</agent:say>
+			<goto state="PackIntro"/>
+		</onevent> 
+		<onevent name="sense.user.speak" cond="event?:sem:no">
+			<agent:say>Okay, goodbye</agent:say>
+			<goto state="Idle"/>
+		</onevent>	 -->
 	</state>
 	
 	<state id="PackIntro" extends="Dialog">
 		<onentry>
-			<agent:say>I pack my bags and I take with me:
+			<agent:say>I pack my bag and I take with me:
 				<expr>packables.first()</expr>
 			</agent:say>
-			<!-- goto state="Pack"/ -->
+			<random>
+				<agent:say>Your turn</agent:say>
+				<agent:say>Now you</agent:say>
+				<agent:say>It's your turn</agent:say>
+			</random>
+			<goto state="PlayerPacks" />
 		</onentry>
+	</state>
+	
+	<state id="PlayerPacks" extends="Dialog">
+		<!-- <var name="playerPackingListRespond" type="List&lt;String&gt;" value="new java.util.LinkedList&lt;String&gt;()" /> -->
+		<onentry>
+			<agent:listen/>
+		</onentry>
+		<onevent name="sense.user.speak" cond="event?:sem:packables">
+			<agent:say>You have packed <expr>event:sem:packables</expr></agent:say>
+			<exec>System.out.println("You've added an item")</exec>
+		</onevent>
 	</state>
 
 	
