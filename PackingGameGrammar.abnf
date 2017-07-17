@@ -5,7 +5,10 @@ IrisTK version 2017.01.27 at C:\Users\cynthia\IrisTK
 language en-US;
 root $root;
 
-public $root = ((I pack my bag and I take with me [a] [pair of] $PACKABLES {out.packables=rules.packables}) | (yes {out.yes=1}) | (no {out.no=1}));
+public $root = (([I pack my bag and I take with me] [a] [pair of] $PACKABLES {out.packables=rules.packables}) | ($YES {out.yes=1}) | (no {out.no=1}) | $ENDGAME {out.stop=1});
 
 $PACKABLES = ((hat) | (belt) | (comb) | (bathing suit) | (towel) | (toothbrush) | (laptop) | (cell phone) | (shoes));
 
+$YES = (yea | sure | /5/ yes [please]);
+
+$ENDGAME = stop [the game];

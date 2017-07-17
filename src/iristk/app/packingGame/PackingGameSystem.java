@@ -29,7 +29,6 @@ import iristk.flow.FlowModule;
 public class PackingGameSystem {
 		
 	public PackingGameSystem() throws Exception {
-
 		
 		SituatedDialogSystem system = new SituatedDialogSystem(this.getClass());
 		SystemAgentFlow systemAgentFlow = system.addSystemAgent();
@@ -49,7 +48,9 @@ public class PackingGameSystem {
 		//system.connectToBroker("furhat", "127.0.0.1");
 		system.setupFace(new WindowsSynthesizer(), Gender.MALE);
 		
-		system.addModule(new FlowModule(new PackingGameFlow(systemAgentFlow)));
+		PackablesMap packables = new PackablesMap(system.getPackageFile("packables.txt"));
+		
+		system.addModule(new FlowModule(new PackingGameFlow(systemAgentFlow, packables)));
 		
 		//system.loadContext("default", new SpeechGrammarContext(new SRGSGrammar(system.getPackageFile("PackingGameGrammar.xml"))));
 		system.loadContext("default", new SpeechGrammarContext(new ABNFGrammar(system.getPackageFile("PackingGameGrammar.abnf"))));

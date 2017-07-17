@@ -1,38 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <flow name="PackingGameFlow" package="iristk.app.packingGame" 
-	initial="SetUp" xmlns:this="iristk.app.packingGame.PackingGameFlow" xmlns="iristk.flow" 
+	initial="Idle" xmlns:this="iristk.app.packingGame.PackingGameFlow" xmlns="iristk.flow" 
 	xmlns:p="iristk.flow.param" xmlns:agent="iristk.situated.SystemAgentFlow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="iristk.flow flow.xsd iristk.situated.SystemAgentFlow SystemAgentFlow.xsd">
 	
 	<import class="java.util.List"/>
 	<import class="java.util.LinkedList"/>
-	<import class="java.util.TreeSet"/>
+	<import class="javafx.util.Pair"/>
 	
-<!-- 	<param name="agent" type="iristk.situated.SystemAgentFlow"/> -->
-	<param name="packables" type="TreeSet&lt;String &gt;"/>
+ 	<param name="agent" type="iristk.situated.SystemAgentFlow"/>
+	<param name="packables" type="PackablesMap"/>
 	
 	<var name="system" type="iristk.situated.SystemAgent" value="agent.getSystemAgent()"/> 
 
 	<var name="packingList" type="List&lt;String&gt;" value = "new java.util.LinkedList&lt;String&gt;()"/>
 	
-	<var name="packables" type="TreeSet&lt;String &gt;" value="new java.util.TreeSet&lt;String&gt;()"/>
+<!-- 	<var name="packables" type="TreeSet&lt;String &gt;" value="new java.util.TreeSet&lt;String&gt;()"/> -->
 	
-	<state id="SetUp">
-		<onentry>
-			<exec>
-				packables.add("hat");
-				packables.add("shoes");
-				packables.add("hat");
-				packables.add("belt");
-				packables.add("comb");
-				packables.add("towel");
-				packables.add("bathing suit");
-				packables.add("laptop");
-				packables.add("cell phone");
-			</exec>
-			<goto state="Idle"/>
-		</onentry>
-	</state>
 	
 	<state id="Idle" extends="Dialog">
 		<onentry>
@@ -60,20 +44,7 @@
 		</onentry>
 	</state>
 	
-<!-- 	<state id = "AskName" extends="Dialog">
-		<onentry>
-			<agent:say>What is your name</agent:say>
-		</onentry>
-		<onevent name="sense.user.speak">
-			<if cond="event?sem:yoda">
-				<dialog:say>yoda <expr>event:text</expr></dialog:say>
-			</if>
-			<else/>
-				<dialog:say><expr>event:text</expr></dialog:say>
-			<reentry/>
-		</onevent>
-	</state> -->
-	
+
 		<state id="ExplainGame" extends="Dialog">
 		<onentry>
 			<agent:say>I am going on holidays. I need to pack some stuff. Do you want to help?</agent:say>
@@ -90,29 +61,33 @@
 	</state>
 	
 	<state id="PackIntro" extends="Dialog">
+		<var name="randomPackable" type="Pair&lt;String,String&gt;" value="packables.getRandom()"></var>
 		<onentry>
 			<agent:say>I pack my bag and I take with me:
-				<expr>packables.first()</expr>
+				<expr>randomPackable.getValue()</expr>
 			</agent:say>
+			<exec>packingList.add(randomPackable.getKey())</exec>
 			<random>
 				<agent:say>Your turn</agent:say>
 				<agent:say>Now you</agent:say>
 				<agent:say>It's your turn</agent:say>
 			</random>
-			<goto state="PlayerPacks" />
+<!-- 			<goto state="PlayerPacks" /> -->
 		</onentry>
 	</state>
-	
+<!-- 	
 	<state id="PlayerPacks" extends="Dialog">
-		<!-- <var name="playerPackingListRespond" type="List&lt;String&gt;" value="new java.util.LinkedList&lt;String&gt;()" /> -->
-		<onentry>
+		<var name="playerPackingListRespond" type="List&lt;String&gt;" value="new java.util.LinkedList&lt;String&gt;()" />
+		<onentry> 
 			<agent:listen/>
 		</onentry>
 		<onevent name="sense.user.speak" cond="event?:sem:packables">
-			<agent:say>You have packed <expr>event:sem:packables</expr></agent:say>
-			<exec>System.out.println("You've added an item")</exec>
+			<if cond="asString(event:sem:packables) &gt; number">
+				<exec>System.out.println("You've added an item")</exec>
+				<agent:say>You have packed <expr>event:sem:packables</expr></agent:say>
+			</if>
 		</onevent>
-	</state>
+	</state> -->
 
 	
 	<state id="CheckAgain" extends="Dialog">
@@ -133,6 +108,12 @@
 	<state id="Dialog">
 		<onevent name="sense.user.speech.start" cond="system.isAttending(event) and eq(event:speakers, 1)">
 			<agent:gesture name="'smile'"/>
+		</onevent>
+		<onevent name="sense.user.speak" cond="event?:sem:stop">
+			<agent:say>
+				Goodbye
+			</agent:say>
+			<exec>System.exit(0)</exec>
 		</onevent>
 		<onevent name="sense.user.speak">
 			<agent:say>Sorry, I didn't get that.</agent:say>
