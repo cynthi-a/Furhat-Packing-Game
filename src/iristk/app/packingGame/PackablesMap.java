@@ -1,7 +1,5 @@
 package iristk.app.packingGame;
 
-import iristk.app.quiz.Question;
-import iristk.app.quiz.QuestionSet;
 import iristk.system.IrisUtils;
 
 import java.io.BufferedReader;
@@ -22,7 +20,7 @@ import org.slf4j.Logger;
 
 public class PackablesMap extends HashMap<String, String>{
 	
-	private static Logger logger = IrisUtils.getLogger(QuestionSet.class);
+	private static Logger logger = IrisUtils.getLogger(PackablesMap.class);
 	private Random generator;
 	
 	public PackablesMap(InputStream questionFile) throws IOException {

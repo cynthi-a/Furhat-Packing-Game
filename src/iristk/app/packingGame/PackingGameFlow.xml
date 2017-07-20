@@ -4,16 +4,17 @@
 	xmlns:p="iristk.flow.param" xmlns:agent="iristk.situated.SystemAgentFlow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="iristk.flow flow.xsd iristk.situated.SystemAgentFlow SystemAgentFlow.xsd">
 	
-	<import class="java.util.List"/>
+<!-- 	<import class="java.util.List"/> -->
 	<import class="java.util.LinkedList"/>
 	<import class="javafx.util.Pair"/>
+	<import class="java.util.Iterator"/>
 	
  	<param name="agent" type="iristk.situated.SystemAgentFlow"/>
 	<param name="packables" type="PackablesMap"/>
 	
 	<var name="system" type="iristk.situated.SystemAgent" value="agent.getSystemAgent()"/> 
 
-	<var name="packingList" type="List&lt;String&gt;" value = "new java.util.LinkedList&lt;String&gt;()"/>
+	<var name="packingList" type="LinkedList&lt;String&gt;" value = "new java.util.LinkedList&lt;String&gt;()"/>
 	
 <!-- 	<var name="packables" type="TreeSet&lt;String &gt;" value="new java.util.TreeSet&lt;String&gt;()"/> -->
 	
@@ -72,22 +73,40 @@
 				<agent:say>Now you</agent:say>
 				<agent:say>It's your turn</agent:say>
 			</random>
-<!-- 			<goto state="PlayerPacks" /> -->
+			<exec>System.out.println("Packing list contains: " + packingList)</exec>
+ 			<goto state="PlayerPacks" />
 		</onentry>
 	</state>
-<!-- 	
+	
 	<state id="PlayerPacks" extends="Dialog">
-		<var name="playerPackingListRespond" type="List&lt;String&gt;" value="new java.util.LinkedList&lt;String&gt;()" />
+		<var name="packingListIterator" type="Iterator" value="packingList.descendingIterator()" />
+		
 		<onentry> 
 			<agent:listen/>
 		</onentry>
+		
 		<onevent name="sense.user.speak" cond="event?:sem:packables">
-			<if cond="asString(event:sem:packables) &gt; number">
-				<exec>System.out.println("You've added an item")</exec>
-				<agent:say>You have packed <expr>event:sem:packables</expr></agent:say>
+			<var name="response" type="String" value="asString(event:sem:packables)"/>
+			<var name="firstInList" type="String" value="packingListIterator.next()" />
+			
+			<!-- check to see if the items the player mentions are already in the list -->
+			<if cond="!(firstInList.equals(response))">
+				<exec>System.out.println("This item is not in the packing list")</exec>
+				<agent:say><expr>response</expr>is not in the packing list</agent:say>
+				
+				<reentry/>
+			
+			<elseif cond="firstInList.equals(response)"/>
+				<exec>System.out.println(response +" is in the packing list")</exec>
+				<agent:say><expr>response</expr>is correct</agent:say>
+				<reentry/>
 			</if>
+			
+			
+			
+			
 		</onevent>
-	</state> -->
+	</state>
 
 	
 	<state id="CheckAgain" extends="Dialog">
