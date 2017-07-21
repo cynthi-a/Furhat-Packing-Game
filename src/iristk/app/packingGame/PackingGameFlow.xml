@@ -78,6 +78,26 @@
 		</onentry>
 	</state>
 	
+	<state id="AddItem" extends="Dialog">
+		<onentry>
+			<agent:listen/>
+		</onentry>
+		<onevent name="sense.user.speak" cond="event?:sem:packables">
+			<var name="newItem" type="String" value="asString(event:sem:packables)"/>
+			<if cond="!packingList.contains(newItem)">
+				<exec></exec>
+				<exec>System.out.println(newItem +" added")</exec>
+				<exec>packingList.add(newItem)</exec>
+				<exec>System.out.println(packingList)</exec>
+				
+				<elseif cond="packingList.contains(newItem)"/>
+					<agent:say><expr>newItem</expr>is already in the packing list</agent:say>
+					<goto state="CheckAgain"/>
+			</if>
+			<goto state="FurhatPacks"/>
+		</onevent>
+	</state>
+	
 	<state id="PlayerPacks" extends="Dialog">
 		<var name="packingListIterator" type="Iterator" value="packingList.descendingIterator()" />
 		
@@ -92,20 +112,38 @@
 			<!-- check to see if the items the player mentions are already in the list -->
 			<if cond="!(firstInList.equals(response))">
 				<exec>System.out.println("This item is not in the packing list")</exec>
-				<agent:say><expr>response</expr>is not in the packing list</agent:say>
-				
-				<reentry/>
+				<agent:say><expr>response</expr>is not in the packing list</agent:say>				
+				<goto state="CheckAgain"/>
 			
-			<elseif cond="firstInList.equals(response)"/>
-				<exec>System.out.println(response +" is in the packing list")</exec>
-				<agent:say><expr>response</expr>is correct</agent:say>
-				<reentry/>
+				<elseif cond="firstInList.equals(response)"/>
+					<exec>System.out.println(response +" is in the packing list")</exec>
+					<agent:say><expr>response</expr>is correct</agent:say>
+					
+					<if cond="packingListIterator.hasNext()">
+						<reentry/>
+					
+					<elseif cond="!packingListIterator.hasNext()"/>
+<!-- 						<call state="AddItem" p:item="response"/>
+						<goto state="FurhatPacks"/> -->
+						<goto state="AddItem"/>
+					</if>
+			
+<!-- 				<elseif cond="!packingListIterator.hasNext()"/>
+					<call state="AddItem" p:item="response"/>
+					<goto state="FurhatPacks"/> -->
 			</if>
 			
-			
-			
-			
 		</onevent>
+	</state>
+	
+	<state id="FurhatPacks" extends="Dialog">
+		<onentry>
+			<random>
+				<agent:say>OK it's my turn now</agent:say>
+				<agent:say>Alright then. My turn</agent:say>
+				<agent:say>Good job. Now me</agent:say>
+			</random>
+		</onentry>
 	</state>
 
 	
@@ -120,6 +158,7 @@
 		</onevent>
 		<onevent name="sense.user.speak" cond="event?:sem:no">
 			<agent:say>Okay, goodbye</agent:say>
+			<exec>packingList.clear()</exec>
 			<goto state="Idle"/>
 		</onevent>		
 	</state>
@@ -132,7 +171,7 @@
 			<agent:say>
 				Goodbye
 			</agent:say>
-			<exec>System.exit(0)</exec>
+			<goto state="Idle"/>
 		</onevent>
 		<onevent name="sense.user.speak">
 			<agent:say>Sorry, I didn't get that.</agent:say>
