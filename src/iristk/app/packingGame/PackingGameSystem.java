@@ -14,8 +14,10 @@ import java.util.TreeSet;
 
 import iristk.situated.SituatedDialogSystem;
 import iristk.situated.SystemAgentFlow;
+import iristk.speech.SemanticGrammarContext;
 import iristk.speech.SpeechGrammarContext;
 import iristk.speech.Voice.Gender;
+import iristk.speech.nuancecloud.NuanceCloudRecognizerFactory;
 import iristk.speech.windows.WindowsRecognizerFactory;
 import iristk.speech.windows.WindowsSynthesizer;
 import iristk.system.IrisUtils;
@@ -41,7 +43,8 @@ public class PackingGameSystem {
 		
 		//system.setupKinect();
 		
-		system.setupMonoMicrophone(new WindowsRecognizerFactory());
+		//system.setupMonoMicrophone(new WindowsRecognizerFactory());
+		system.setupMonoMicrophone(new NuanceCloudRecognizerFactory());
 		//system.setupStereoMicrophones(new WindowsRecognizerFactory());
 		//system.setupKinectMicrophone(new KinectRecognizerFactory());
 				
@@ -49,15 +52,12 @@ public class PackingGameSystem {
 		system.setupFace(new WindowsSynthesizer(), Gender.MALE);
 		
 		PackablesMap packables = new PackablesMap(system.getPackageFile("packables.txt"));
-		
 		system.addModule(new FlowModule(new PackingGameFlow(systemAgentFlow, packables)));
 		
 		//system.loadContext("default", new SpeechGrammarContext(new SRGSGrammar(system.getPackageFile("PackingGameGrammar.xml"))));
-		system.loadContext("default", new SpeechGrammarContext(new ABNFGrammar(system.getPackageFile("PackingGameGrammar.abnf"))));
-		
-/*		SRGSGrammar packablesGrammar = new SRGSGrammar(system.getPackageFile("PackingGameGrammar.xml"));
-		packablesGrammar.addRules(new ListGrammar(system.getPackageFile("packables.txt"), Language.ENGLISH_US, "PACKABLES"));
-		system.loadContext("default", new SpeechGrammarContext(packablesGrammar));*/
+		//system.loadContext("default", new SpeechGrammarContext(new ABNFGrammar(system.getPackageFile("PackingGameGrammar.abnf"))));
+		system.loadContext("default", new SemanticGrammarContext(new ABNFGrammar(system.getPackageFile("PackingGameGrammar.abnf"))));
+
 		
 		system.loadPositions(system.getPackageFile("situation.properties"));		
 		system.sendStartSignal();

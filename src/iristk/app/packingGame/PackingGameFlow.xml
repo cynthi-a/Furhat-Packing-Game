@@ -78,14 +78,13 @@
 		</onentry>
 	</state>
 	
-	<state id="AddItem" extends="Dialog">
+	<state id="UserAddsItem" extends="Dialog">
 		<onentry>
 			<agent:listen/>
 		</onentry>
 		<onevent name="sense.user.speak" cond="event?:sem:packables">
 			<var name="newItem" type="String" value="asString(event:sem:packables)"/>
 			<if cond="!packingList.contains(newItem)">
-				<exec></exec>
 				<exec>System.out.println(newItem +" added")</exec>
 				<exec>packingList.add(newItem)</exec>
 				<exec>System.out.println(packingList)</exec>
@@ -99,7 +98,7 @@
 	</state>
 	
 	<state id="PlayerPacks" extends="Dialog">
-		<var name="packingListIterator" type="Iterator" value="packingList.descendingIterator()" />
+		<var name="packingListIterator" type="Iterator" value="packingList.iterator()" />
 		
 		<onentry> 
 			<agent:listen/>
@@ -123,26 +122,38 @@
 						<reentry/>
 					
 					<elseif cond="!packingListIterator.hasNext()"/>
-<!-- 						<call state="AddItem" p:item="response"/>
-						<goto state="FurhatPacks"/> -->
-						<goto state="AddItem"/>
+						<goto state="UserAddsItem"/>
 					</if>
-			
-<!-- 				<elseif cond="!packingListIterator.hasNext()"/>
-					<call state="AddItem" p:item="response"/>
-					<goto state="FurhatPacks"/> -->
 			</if>
 			
 		</onevent>
 	</state>
 	
 	<state id="FurhatPacks" extends="Dialog">
+		<var name="packingListIterator" type="Iterator" value="packingList.iterator()" />
+		<var name="count" type="int" value="0"/>
 		<onentry>
 			<random>
 				<agent:say>OK it's my turn now</agent:say>
 				<agent:say>Alright then. My turn</agent:say>
 				<agent:say>Good job. Now me</agent:say>
 			</random>
+			<agent:say>I pack my bag and I take with me</agent:say>
+			<repeat while="packingListIterator.hasNext()">
+				<agent:say><expr>packables.get(packingListIterator.next())</expr></agent:say>	
+				<if cond="count == (packingList.size() - 2)">
+					<agent:say>and</agent:say>
+				</if>			
+				<exec>count++</exec>
+			</repeat>			
+		</onentry>
+		
+	</state>
+	
+	<state id="ClearPackingList">
+		<onentry>
+			<exec>packingList.clear()</exec>
+			<return/>
 		</onentry>
 	</state>
 
@@ -154,11 +165,12 @@
 		</onentry>
 		<onevent name="sense.user.speak" cond="event?:sem:yes">
 			<agent:say>Okay, let's play again.</agent:say>
+			<call state="ClearPackingList"/>
 			<goto state="PackIntro"/>
 		</onevent>
 		<onevent name="sense.user.speak" cond="event?:sem:no">
 			<agent:say>Okay, goodbye</agent:say>
-			<exec>packingList.clear()</exec>
+			<call state="ClearPackingList"/>
 			<goto state="Idle"/>
 		</onevent>		
 	</state>
@@ -171,6 +183,7 @@
 			<agent:say>
 				Goodbye
 			</agent:say>
+			<call state="ClearPackingList"/>
 			<goto state="Idle"/>
 		</onevent>
 		<onevent name="sense.user.speak">
@@ -194,7 +207,6 @@
 		<onevent name="sense.user.leave" cond="system.isAttending(event)">
 			<if cond="system.hasUsers()">
 				<agent:attendRandom/>
-				<!-- <goto state="Guess" /> -->
 			<else />
 				<goto state="Idle"/>
 			</if>
