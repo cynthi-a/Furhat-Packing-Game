@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <flow name="PackingGameFlow" package="iristk.app.packingGame" 
-	initial="Idle" xmlns:this="iristk.app.packingGame.PackingGameFlow" xmlns="iristk.flow" 
+	initial="PackIntro" xmlns:this="iristk.app.packingGame.PackingGameFlow" xmlns="iristk.flow" 
 	xmlns:p="iristk.flow.param" xmlns:agent="iristk.situated.SystemAgentFlow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="iristk.flow flow.xsd iristk.situated.SystemAgentFlow SystemAgentFlow.xsd">
 	
@@ -62,18 +62,15 @@
 	</state>
 	
 	<state id="PackIntro" extends="Dialog">
-		<var name="randomPackable" type="Pair&lt;String,String&gt;" value="packables.getRandom()"></var>
+		
 		<onentry>
-			<agent:say>I pack my bag and I take with me:
-				<expr>randomPackable.getValue()</expr>
-			</agent:say>
-			<exec>packingList.add(randomPackable.getKey())</exec>
+			<agent:say>I pack my bag and I take with me:</agent:say>
+			<call state="PackRandomItem"/>
 			<random>
 				<agent:say>Your turn</agent:say>
 				<agent:say>Now you</agent:say>
 				<agent:say>It's your turn</agent:say>
 			</random>
-			<exec>System.out.println("Packing list contains: " + packingList)</exec>
  			<goto state="PlayerPacks" />
 		</onentry>
 	</state>
@@ -83,7 +80,7 @@
 			<agent:listen/>
 		</onentry>
 		<onevent name="sense.user.speak" cond="event?:sem:packables">
-			<var name="newItem" type="String" value="asString(event:sem:packables)"/>
+			<var name="newItem" type="String" value="asString(event:sem:packables).toLowerCase()"/>
 			<if cond="!packingList.contains(newItem)">
 				<exec>System.out.println(newItem +" added")</exec>
 				<exec>packingList.add(newItem)</exec>
@@ -105,7 +102,7 @@
 		</onentry>
 		
 		<onevent name="sense.user.speak" cond="event?:sem:packables">
-			<var name="response" type="String" value="asString(event:sem:packables)"/>
+			<var name="response" type="String" value="asString(event:sem:packables).toLowerCase()"/>
 			<var name="firstInList" type="String" value="packingListIterator.next()" />
 			
 			<!-- check to see if the items the player mentions are already in the list -->
@@ -139,15 +136,32 @@
 				<agent:say>Good job. Now me</agent:say>
 			</random>
 			<agent:say>I pack my bag and I take with me</agent:say>
+			
 			<repeat while="packingListIterator.hasNext()">
-				<agent:say><expr>packables.get(packingListIterator.next())</expr></agent:say>	
-				<if cond="count == (packingList.size() - 2)">
-					<agent:say>and</agent:say>
-				</if>			
-				<exec>count++</exec>
+				<agent:say><expr>packables.get(packingListIterator.next())</expr></agent:say>		
 			</repeat>			
+			<agent:say>and</agent:say>
+			
+			<call state="PackRandomItem"/>
+			<goto state="PlayerPacks"/>
 		</onentry>
 		
+	</state>
+	
+	
+	<state id="PackRandomItem">
+		<var name="randomPackable" type="Pair&lt;String,String&gt;" value="packables.getRandom()"></var>
+		<onentry>
+			<repeat while="packingList.contains(randomPackable)">
+				<exec>randomPackable = packables.getRandom()</exec>
+			</repeat>
+			<exec>packingList.add(randomPackable.getKey())</exec>
+			<agent:say>
+				<expr>randomPackable.getValue()</expr>
+			</agent:say>
+			<exec>System.out.println("Packing list contains: " + packingList)</exec>
+			<return/>
+		</onentry>
 	</state>
 	
 	<state id="ClearPackingList">
