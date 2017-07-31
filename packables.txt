@@ -1,6 +1,6 @@
 Name of the packable item;Description of how Furhat should list them
 shoes;a pair of shoes
-hair brush;a hair brush
+hairbrush;a hairbrush
 towel;a towel
 bathing suit;a bathing suit
 laptop;a laptop

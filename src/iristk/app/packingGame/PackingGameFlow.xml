@@ -4,7 +4,7 @@
 	xmlns:p="iristk.flow.param" xmlns:agent="iristk.situated.SystemAgentFlow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="iristk.flow flow.xsd iristk.situated.SystemAgentFlow SystemAgentFlow.xsd">
 	
-<!-- 	<import class="java.util.List"/> -->
+ 	<import class="java.util.List"/> 
 	<import class="java.util.LinkedList"/>
 	<import class="javafx.util.Pair"/>
 	<import class="java.util.Iterator"/>
@@ -15,9 +15,6 @@
 	<var name="system" type="iristk.situated.SystemAgent" value="agent.getSystemAgent()"/> 
 
 	<var name="packingList" type="LinkedList&lt;String&gt;" value = "new java.util.LinkedList&lt;String&gt;()"/>
-	
-<!-- 	<var name="packables" type="TreeSet&lt;String &gt;" value="new java.util.TreeSet&lt;String&gt;()"/> -->
-	
 	
 	<state id="Idle" extends="Dialog">
 		<onentry>
@@ -76,22 +73,17 @@
 	</state>
 	
 	<state id="UserAddsItem" extends="Dialog">
-		<onentry>
-			<agent:listen/>
-		</onentry>
-		<onevent name="sense.user.speak" cond="event?:sem:packables">
-			<var name="newItem" type="String" value="asString(event:sem:packables).toLowerCase()"/>
+		<param name="newItem" type="String"/>
+ 		<onentry>
 			<if cond="!packingList.contains(newItem)">
-				<exec>System.out.println(newItem +" added")</exec>
 				<exec>packingList.add(newItem)</exec>
 				<exec>System.out.println(packingList)</exec>
-				
 				<elseif cond="packingList.contains(newItem)"/>
 					<agent:say><expr>newItem</expr>is already in the packing list</agent:say>
 					<goto state="CheckAgain"/>
 			</if>
-			<goto state="FurhatPacks"/>
-		</onevent>
+		<return/>
+		</onentry>
 	</state>
 	
 	<state id="PlayerPacks" extends="Dialog">
@@ -104,25 +96,23 @@
 		<onevent name="sense.user.speak" cond="event?:sem:packables">
 			<var name="response" type="String" value="asString(event:sem:packables).toLowerCase()"/>
 			<var name="firstInList" type="String" value="packingListIterator.next()" />
-			
+		
+			<exec>System.out.println("response"+response);System.out.println("firstInList: "+firstInList)</exec>
 			<!-- check to see if the items the player mentions are already in the list -->
-			<if cond="!(firstInList.equals(response))">
-				<exec>System.out.println("This item is not in the packing list")</exec>
+			<if cond="!(firstInList.equals(response)) &amp;&amp; packingListIterator.hasNext()">
+				<exec>System.out.println(response+" is not in the packing list")</exec>
 				<agent:say><expr>response</expr>is not in the packing list</agent:say>				
 				<goto state="CheckAgain"/>
 			
-				<elseif cond="firstInList.equals(response)"/>
-					<exec>System.out.println(response +" is in the packing list")</exec>
-					<agent:say><expr>response</expr>is correct</agent:say>
+				<elseif cond="(firstInList.equals(response)) &amp;&amp; packingListIterator.hasNext()"/>
+					<reentry/>
+				<!-- <elseif cond="!packingListIterator.hasNext()"/> -->
+				<else/>
+					<call state="UserAddsItem" p:newItem="response"/>
 					
-					<if cond="packingListIterator.hasNext()">
-						<reentry/>
-					
-					<elseif cond="!packingListIterator.hasNext()"/>
-						<goto state="UserAddsItem"/>
-					</if>
-			</if>
 			
+			</if>
+			<goto state="FurhatPacks"/>
 		</onevent>
 	</state>
 	
@@ -135,12 +125,13 @@
 				<agent:say>Alright then. My turn</agent:say>
 				<agent:say>Good job. Now me</agent:say>
 			</random>
-			<agent:say>I pack my bag and I take with me</agent:say>
+			<agent:say>I pack my bag and I take with me
 			
 			<repeat while="packingListIterator.hasNext()">
-				<agent:say><expr>packables.get(packingListIterator.next())</expr></agent:say>		
+				<expr>packables.get(packingListIterator.next())</expr>	
 			</repeat>			
-			<agent:say>and</agent:say>
+			
+			and</agent:say>
 			
 			<call state="PackRandomItem"/>
 			<goto state="PlayerPacks"/>
@@ -152,7 +143,7 @@
 	<state id="PackRandomItem">
 		<var name="randomPackable" type="Pair&lt;String,String&gt;" value="packables.getRandom()"></var>
 		<onentry>
-			<repeat while="packingList.contains(randomPackable)">
+			<repeat while="packingList.contains(randomPackable.getValue())">
 				<exec>randomPackable = packables.getRandom()</exec>
 			</repeat>
 			<exec>packingList.add(randomPackable.getKey())</exec>
