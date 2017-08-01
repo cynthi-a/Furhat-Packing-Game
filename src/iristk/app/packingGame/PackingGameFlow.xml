@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <flow name="PackingGameFlow" package="iristk.app.packingGame" 
-	initial="PackIntro" xmlns:this="iristk.app.packingGame.PackingGameFlow" xmlns="iristk.flow" 
+	initial="Greeting" xmlns:this="iristk.app.packingGame.PackingGameFlow" xmlns="iristk.flow" 
 	xmlns:p="iristk.flow.param" xmlns:agent="iristk.situated.SystemAgentFlow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="iristk.flow flow.xsd iristk.situated.SystemAgentFlow SystemAgentFlow.xsd">
 	
@@ -46,16 +46,21 @@
 		<state id="ExplainGame" extends="Dialog">
 		<onentry>
 			<agent:say>I am going on holidays. I need to pack some stuff. Do you want to help?</agent:say>
-			<goto state="PackIntro"/>
+			<agent:say>I will start by saying I pack my bag and I take with me <expr>packables.getRandom()</expr>
+			. You then have to repeat the exact same sentence. At the end, you add another item to the
+			packing list and it is my turn again. We continue this until one of us either fails to recall the exact
+			sequence of the items or all items have been packed. Do you understand the rules?</agent:say>
+			<agent:listen/>
+			<!-- <goto state="PackIntro"/> -->
 		</onentry>
-<!-- 		<onevent name="sense.user.speak" cond="event?:sem:yes">
+ 		<onevent name="sense.user.speak" cond="event?:sem:yes">
 			<agent:say>Okay, let's play</agent:say>
 			<goto state="PackIntro"/>
 		</onevent> 
 		<onevent name="sense.user.speak" cond="event?:sem:no">
-			<agent:say>Okay, goodbye</agent:say>
+			<agent:say>Okay, let Cynthia explain it again.</agent:say>
 			<goto state="Idle"/>
-		</onevent>	 -->
+		</onevent>	 
 	</state>
 	
 	<state id="PackIntro" extends="Dialog">
@@ -94,7 +99,7 @@
 		</onentry>
 		
 		<onevent name="sense.user.speak" cond="event?:sem:packables">
-			<var name="response" type="String" value="asString(event:sem:packables).toLowerCase()"/>
+			<var name="response" type="String" value="asString(event:sem:packables ).toLowerCase()"/>
 			<var name="firstInList" type="String" value="packingListIterator.next()" />
 		
 			<exec>System.out.println("response"+response);System.out.println("firstInList: "+firstInList)</exec>
