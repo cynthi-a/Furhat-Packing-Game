@@ -13,6 +13,7 @@ package iristk.app.packingGame;
 import java.util.TreeSet;
 
 import iristk.situated.SituatedDialogSystem;
+import iristk.situated.SystemAgent;
 import iristk.situated.SystemAgentFlow;
 import iristk.speech.SemanticGrammarContext;
 import iristk.speech.SpeechGrammarContext;
@@ -34,6 +35,10 @@ public class PackingGameSystem {
 		
 		SituatedDialogSystem system = new SituatedDialogSystem(this.getClass());
 		SystemAgentFlow systemAgentFlow = system.addSystemAgent();
+		
+		SystemAgent systemAgent = systemAgentFlow.getSystemAgent();
+		systemAgent.setMaxUsers(1);
+		systemAgent.setInteractionDistance(2);
 	
 		system.setLanguage(Language.ENGLISH_US);
 	
@@ -41,7 +46,7 @@ public class PackingGameSystem {
 		
 		system.setupGUI();
 		
-		//system.setupKinect();
+		system.setupKinect();
 		
 		//system.setupMonoMicrophone(new WindowsRecognizerFactory());
 		system.setupMonoMicrophone(new NuanceCloudRecognizerFactory());

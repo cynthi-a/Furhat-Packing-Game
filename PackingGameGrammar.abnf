@@ -4,7 +4,7 @@ IrisTK version 2017.01.27 at C:\Users\cynthia\IrisTK
 
 language en-US;
 
-public $root = (([I pack my bag and I take with me] [a] [pair of] $packables {out.packables=rules.packables}) | ($yes {out.yes=1}) | (no {out.no=1}) | $endgame {out.stop=1});
+public $root = (([I pack my bag and I take with me] [a] [pair of] $packables {out.packables=rules.packables}) | ($yes {out.yes=1}) | ($no {out.no=1}) | $endgame {out.stop=1} | $continue {out.continue=1});
 
 public $packables = [I pack my bag and I take with me] [a] [an] [pair of] $packable {out=rules.packable};
 
@@ -15,3 +15,5 @@ public $yes = (yea | sure | yes | yep [please]) {out.yes=1};
 public $no = (no | nah | nope | no way) {out.no=1};
 
 public $endgame = (stop the game | end the game) {out.stop=1};
+
+public $continue = ((we | let's | you) [can] continue [the game]) {out.continue=1};

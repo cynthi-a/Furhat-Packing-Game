@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <flow name="PackingGameFlow" package="iristk.app.packingGame" 
-	initial="PackIntro" xmlns:this="iristk.app.packingGame.PackingGameFlow" xmlns="iristk.flow" 
+	initial="Idle" xmlns:this="iristk.app.packingGame.PackingGameFlow" xmlns="iristk.flow" 
 	xmlns:p="iristk.flow.param" xmlns:agent="iristk.situated.SystemAgentFlow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="iristk.flow flow.xsd iristk.situated.SystemAgentFlow SystemAgentFlow.xsd">
 	
@@ -31,6 +31,16 @@
 		</onevent>
 	</state>
 	
+	<state id="WaitToContinue">
+		<onentry>
+			<agent:listen/>
+			<reentry/>
+		</onentry>
+		<onevent name="sense.user.speak" cond="event?:sem:continue">
+			<goto state="PackIntro"/>
+		</onevent>
+	</state>
+	
 	<state id="Greeting" extends="Dialog">
 		<onentry>
 			<random>
@@ -45,11 +55,11 @@
 	<state id="ExplainGame" extends="Dialog">
 		<onentry>
 			<agent:say>The game goes like this: </agent:say>
-			<agent:say>I will start by saying I pack my bag and I take with me for example <expr>packables.getRandom().getValue()</expr>
+			<agent:say>I will start by saying I pack my bag and I take with me for example<expr>packables.getRandom().getValue()</expr>
 			. You then have to repeat the exact same sentence. At the end, you add another item to the
 			packing list and it is my turn again. We continue this until one of us either fails to recall the exact
 			sequence of the items or all items have been packed. Do you understand the rules?</agent:say>
-			<agent:listen/>
+			<agent:listen timeout="3000"/>
 		</onentry>
  		<onevent name="sense.user.speak" cond="event?:sem:yes">
 			<agent:say>Okay, let's play</agent:say>
@@ -57,7 +67,7 @@
 		</onevent> 
 		<onevent name="sense.user.speak" cond="event?:sem:no">
 			<agent:say>Okay, let Cynthia explain it again.</agent:say>
-			<goto state="Idle"/>
+			<goto state="WaitToContinue"/>
 		</onevent>	 
 	</state>
 	
@@ -93,7 +103,7 @@
 		<var name="packingListIterator" type="Iterator" value="packingList.iterator()" />
 		<var name="responseList" type="List" value="new LinkedList&lt;String&gt;()"/>
 		<onentry> 
-			<agent:listen/>
+			<agent:listen timeout="10000" endSil="2000"/>
 		</onentry>
 		
 		<onevent name="sense.user.speak" cond="event?:sem:packables">
@@ -138,11 +148,14 @@
 	
 	<state id="FurhatPacks" extends="Dialog">
 		<var name="packingListIterator" type="Iterator" value="packingList.iterator()" />
+		
+		<var name="furhatFails" type="boolean" value="false"/>
+		
 		<onentry>
 			<random>
-				<agent:say>OK it's my turn now</agent:say>
+				<agent:say gesture="'nod'">OK it's my turn now</agent:say>
 				<agent:say>Alright then. My turn</agent:say>
-				<agent:say>Good job. Now me</agent:say>
+				<agent:say gesture="'nod'">Good job. Now me</agent:say>
 				<agent:say>Well done. I will go on</agent:say>
 			</random>
 			<agent:say>I pack my bag and I take with me
@@ -153,18 +166,35 @@
 					
 			and</agent:say>
 			
+			<!-- insert logic to handle random failure here 
+			<if cond="packingList.size() >= 4">
+				<exec></exec>
+			</if> -->
+			
+			
+			
+			
+			
 			<call state="PackRandomItem"/>
 			<goto state="PlayerPacks"/>
 		</onentry>
 	</state>
 	
-	
 	<state id="PackRandomItem">
 		<var name="randomPackable" type="Pair&lt;String,String&gt;" value="packables.getRandom()"></var>
 		<onentry>
-			<repeat while="packingList.contains(randomPackable.getValue())">
+		
+		
+<!-- 		<repeat while="packingList.contains(randomPackable.getValue())">
 				<exec>randomPackable = packables.getRandom()</exec>
-			</repeat>
+			</repeat> -->
+			<exec>
+			
+			while(packingList.contains(randomPackable.getValue())) {
+				randomPackable = packables.getRandom();
+			}
+			</exec>
+			
 			<exec>packingList.add(randomPackable.getKey())</exec>
 			<agent:say>
 				<expr>randomPackable.getValue()</expr>
@@ -185,26 +215,26 @@
 	<state id="CheckAgain" extends="Dialog">
 		<onentry>
 			<random>
-				<agent:say>This round, we managed to remember<expr>packingList.size()</expr>items</agent:say>
-				<agent:say>We remembered<expr>packingList.size()</expr>items in this round</agent:say>
-				<agent:say>Let's see if we can beat<expr>packingList.size()</expr>items in the next round</agent:say>
+				<agent:say gesture="'brow_raise'">This round, we managed to remember<expr>packingList.size()</expr><if cond="packingList.size()==1">item only<else/>items</if></agent:say>
+				<agent:say gesture="'brow_raise'">We remembered<expr>packingList.size()</expr><if cond="packingList.size()==1">item<else/>items</if>in this round</agent:say>
+				<agent:say gesture="'brow_raise'">Let's see if we can beat<expr>packingList.size()</expr><if cond="packingList.size()==1">item<else/>items</if>in the next round</agent:say>
 			</random>
 			<random>
-				<agent:say>Do you want to play again?</agent:say>
+				<agent:say gesture="'smile'">Do you want to play again?</agent:say>
 				<agent:say>Would you like another round?</agent:say>
 				<agent:say>Shall we try again?</agent:say>
 			</random>
 			<agent:listen/>
 		</onentry>
 		<onevent name="sense.user.speak" cond="event?:sem:yes">
-			<agent:say>Okay, let's play again.</agent:say>
+			<agent:say gesture="'smile'">Okay, let's play again.</agent:say>
 			<call state="ClearPackingList"/>
 			<goto state="PackIntro"/>
 		</onevent>
 		<onevent name="sense.user.speak" cond="event?:sem:no">
-			<agent:say>Okay, goodbye</agent:say>
+			<agent:say gesture="'emotion_sad'">Okay, goodbye</agent:say>
 			<call state="ClearPackingList"/>
-			<goto state="Idle"/>
+			<goto state="WaitToContinue"/>
 		</onevent>		
 	</state>
 	
@@ -217,7 +247,7 @@
 				Goodbye
 			</agent:say>
 			<call state="ClearPackingList"/>
-			<goto state="Idle"/>
+			<goto state="WaitToContinue"/>
 		</onevent>
 		<onevent name="sense.user.speak">
 			<agent:say>Sorry, I didn't get that.</agent:say>
@@ -237,13 +267,13 @@
 			<agent:say>Sorry, I didn't hear anything.</agent:say>
 			<reentry/>
 		</onevent>
-		<onevent name="sense.user.leave" cond="system.isAttending(event)">
+ 		<onevent name="sense.user.leave" cond="system.isAttending(event)">
 			<if cond="system.hasUsers()">
 				<agent:attendRandom/>
 			<else />
 				<goto state="Idle"/>
 			</if>
-		</onevent>
+		</onevent> 
 		<onevent name="repeat">
 			<reentry/>
 		</onevent>
