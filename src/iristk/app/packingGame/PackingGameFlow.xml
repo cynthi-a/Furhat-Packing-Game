@@ -15,8 +15,7 @@
 	
 	<var name="system" type="iristk.situated.SystemAgent" value="agent.getSystemAgent()"/> 
 	<var name="packingList" type="LinkedList&lt;String&gt;" value = "new java.util.LinkedList&lt;String&gt;()"/>
-<!-- 	<var name="packingListIterator" type="Iterator" value="packingList.iterator()" /> -->
-	
+
 	<state id="Idle" extends="Dialog">
 		<onentry>
 			<if cond="system.hasUsers()">
@@ -103,7 +102,7 @@
 			<exec>
 				Scanner sc = new Scanner(response);
 				while(sc.hasNext()) {
-					String nextWord = sc.next().toLowerCase();
+					String nextWord = sc.next();
 					if (packables.containsKey(nextWord)) {
 						responseList.add(nextWord);
 					}
@@ -115,7 +114,12 @@
  			<repeat while="packingListIterator.hasNext()">
  				<var name="nextResponse" value="responseIterator.next()"/>
  				<if cond="!packingListIterator.next().equals(nextResponse) &amp;&amp; packingListIterator.hasNext()">
-					<agent:say><expr>nextResponse</expr>is not in the packing list</agent:say>
+ 					
+ 					<if cond="packingList.contains(nextResponse)">
+ 						<agent:say><expr>nextResponse</expr>is in the packing list but at a different position</agent:say>
+ 					<elseif cond="!packingList.contains(nextResponse)"/>
+ 						<agent:say><expr>nextResponse</expr>is not in the packing list</agent:say>
+ 					</if>
 					<goto state="CheckAgain"/>
 				</if>
  			</repeat>
@@ -139,13 +143,14 @@
 				<agent:say>OK it's my turn now</agent:say>
 				<agent:say>Alright then. My turn</agent:say>
 				<agent:say>Good job. Now me</agent:say>
+				<agent:say>Well done. I will go on</agent:say>
 			</random>
 			<agent:say>I pack my bag and I take with me
 			
 			<repeat while="packingListIterator.hasNext()">
 				<expr>packables.get(packingListIterator.next())</expr>	
-			</repeat>			
-			
+			</repeat>	
+					
 			and</agent:say>
 			
 			<call state="PackRandomItem"/>
@@ -164,7 +169,7 @@
 			<agent:say>
 				<expr>randomPackable.getValue()</expr>
 			</agent:say>
-			<exec>System.out.println("Packing list contains: " + packingList)</exec>
+			<exec>System.out.println("Packing list: " + packingList)</exec>
 			<return/>
 		</onentry>
 	</state>
@@ -179,7 +184,16 @@
 	
 	<state id="CheckAgain" extends="Dialog">
 		<onentry>
-			<agent:say>Do you want to play again?</agent:say>
+			<random>
+				<agent:say>This round, we managed to remember<expr>packingList.size()</expr>items</agent:say>
+				<agent:say>We remembered<expr>packingList.size()</expr>items in this round</agent:say>
+				<agent:say>Let's see if we can beat<expr>packingList.size()</expr>items in the next round</agent:say>
+			</random>
+			<random>
+				<agent:say>Do you want to play again?</agent:say>
+				<agent:say>Would you like another round?</agent:say>
+				<agent:say>Shall we try again?</agent:say>
+			</random>
 			<agent:listen/>
 		</onentry>
 		<onevent name="sense.user.speak" cond="event?:sem:yes">

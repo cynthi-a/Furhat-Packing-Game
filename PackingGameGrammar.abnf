@@ -8,7 +8,7 @@ public $root = (([I pack my bag and I take with me] [a] [pair of] $packables {ou
 
 public $packables = [I pack my bag and I take with me] [a] [an] [pair of] $packable {out=rules.packable};
 
-$packable = ((moisturizer) | (belt) | (hairbrush) | (bathing suit) | (towel) | (toothbrush) | (laptop) | (cell phone) | (shoes) | (sunglasses) | (sunscreen) | (raincoat)| (umbrella));
+$packable = ((moisturizer) | (belt) | (hairbrush) | (bikini) | (towel) | (toothbrush) | (laptop) | (phone) | (shoes) | (sunglasses) | (sunscreen) | (raincoat)| (umbrella));
 
 public $yes = (yea | sure | yes | yep [please]) {out.yes=1};
 

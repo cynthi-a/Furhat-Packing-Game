@@ -2,9 +2,9 @@ Name of the packable item;Description of how Furhat should list them
 shoes;a pair of shoes
 hairbrush;a hairbrush
 towel;a towel
-bathing suit;a bathing suit
+bikini;a bikini
 laptop;a laptop
-cell phone;a cell phone
+phone;a cell phone
 belt;a belt
 sunglasses;a pair of sunglasses 
 moisturizer;moisturizer
