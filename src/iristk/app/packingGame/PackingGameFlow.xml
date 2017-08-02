@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <flow name="PackingGameFlow" package="iristk.app.packingGame" 
-	initial="Greeting" xmlns:this="iristk.app.packingGame.PackingGameFlow" xmlns="iristk.flow" 
+	initial="PackIntro" xmlns:this="iristk.app.packingGame.PackingGameFlow" xmlns="iristk.flow" 
 	xmlns:p="iristk.flow.param" xmlns:agent="iristk.situated.SystemAgentFlow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="iristk.flow flow.xsd iristk.situated.SystemAgentFlow SystemAgentFlow.xsd">
 	
@@ -8,13 +8,14 @@
 	<import class="java.util.LinkedList"/>
 	<import class="javafx.util.Pair"/>
 	<import class="java.util.Iterator"/>
+	<import class="java.util.Scanner"/>
 	
  	<param name="agent" type="iristk.situated.SystemAgentFlow"/>
 	<param name="packables" type="PackablesMap"/>
 	
 	<var name="system" type="iristk.situated.SystemAgent" value="agent.getSystemAgent()"/> 
-
 	<var name="packingList" type="LinkedList&lt;String&gt;" value = "new java.util.LinkedList&lt;String&gt;()"/>
+<!-- 	<var name="packingListIterator" type="Iterator" value="packingList.iterator()" /> -->
 	
 	<state id="Idle" extends="Dialog">
 		<onentry>
@@ -42,16 +43,14 @@
 		</onentry>
 	</state>
 	
-
-		<state id="ExplainGame" extends="Dialog">
+	<state id="ExplainGame" extends="Dialog">
 		<onentry>
-			<agent:say>I am going on holidays. I need to pack some stuff. Do you want to help?</agent:say>
-			<agent:say>I will start by saying I pack my bag and I take with me <expr>packables.getRandom()</expr>
+			<agent:say>The game goes like this: </agent:say>
+			<agent:say>I will start by saying I pack my bag and I take with me for example <expr>packables.getRandom().getValue()</expr>
 			. You then have to repeat the exact same sentence. At the end, you add another item to the
 			packing list and it is my turn again. We continue this until one of us either fails to recall the exact
 			sequence of the items or all items have been packed. Do you understand the rules?</agent:say>
 			<agent:listen/>
-			<!-- <goto state="PackIntro"/> -->
 		</onentry>
  		<onevent name="sense.user.speak" cond="event?:sem:yes">
 			<agent:say>Okay, let's play</agent:say>
@@ -90,40 +89,51 @@
 		<return/>
 		</onentry>
 	</state>
-	
+
 	<state id="PlayerPacks" extends="Dialog">
 		<var name="packingListIterator" type="Iterator" value="packingList.iterator()" />
-		
+		<var name="responseList" type="List" value="new LinkedList&lt;String&gt;()"/>
 		<onentry> 
 			<agent:listen/>
 		</onentry>
 		
 		<onevent name="sense.user.speak" cond="event?:sem:packables">
-			<var name="response" type="String" value="asString(event:sem:packables ).toLowerCase()"/>
-			<var name="firstInList" type="String" value="packingListIterator.next()" />
-		
-			<exec>System.out.println("response"+response);System.out.println("firstInList: "+firstInList)</exec>
-			<!-- check to see if the items the player mentions are already in the list -->
-			<if cond="!(firstInList.equals(response)) &amp;&amp; packingListIterator.hasNext()">
-				<exec>System.out.println(response+" is not in the packing list")</exec>
-				<agent:say><expr>response</expr>is not in the packing list</agent:say>				
+			<var name="response" type="String" value="asString(event:text).toLowerCase()"/>
+
+			<exec>
+				Scanner sc = new Scanner(response);
+				while(sc.hasNext()) {
+					String nextWord = sc.next().toLowerCase();
+					if (packables.containsKey(nextWord)) {
+						responseList.add(nextWord);
+					}
+				}
+			</exec>
+			
+			<var name="responseIterator" type="Iterator" value="responseList.iterator()"/>
+
+ 			<repeat while="packingListIterator.hasNext()">
+ 				<var name="nextResponse" value="responseIterator.next()"/>
+ 				<if cond="!packingListIterator.next().equals(nextResponse) &amp;&amp; packingListIterator.hasNext()">
+					<agent:say><expr>nextResponse</expr>is not in the packing list</agent:say>
+					<goto state="CheckAgain"/>
+				</if>
+ 			</repeat>
+			
+			<if cond="responseIterator.hasNext()">
+				<call state="UserAddsItem" p:newItem="responseIterator.next()"/>
+ 				<elseif cond="!responseIterator.hasNext()"/>
+					<agent:say>Seems like you forgot to add a new item to the list</agent:say>
 				<goto state="CheckAgain"/>
+			</if> 
 			
-				<elseif cond="(firstInList.equals(response)) &amp;&amp; packingListIterator.hasNext()"/>
-					<reentry/>
-				<!-- <elseif cond="!packingListIterator.hasNext()"/> -->
-				<else/>
-					<call state="UserAddsItem" p:newItem="response"/>
-					
-			
-			</if>
 			<goto state="FurhatPacks"/>
 		</onevent>
 	</state>
 	
+	
 	<state id="FurhatPacks" extends="Dialog">
 		<var name="packingListIterator" type="Iterator" value="packingList.iterator()" />
-		<var name="count" type="int" value="0"/>
 		<onentry>
 			<random>
 				<agent:say>OK it's my turn now</agent:say>
@@ -141,7 +151,6 @@
 			<call state="PackRandomItem"/>
 			<goto state="PlayerPacks"/>
 		</onentry>
-		
 	</state>
 	
 	
