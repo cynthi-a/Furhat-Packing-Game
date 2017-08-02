@@ -10,10 +10,10 @@ public $packables = [I pack my bag and I take with me] [a] [an] [pair of] $packa
 
 $packable = ((moisturizer) | (belt) | (hairbrush) | (bikini) | (towel) | (toothbrush) | (laptop) | (phone) | (shoes) | (sunglasses) | (sunscreen) | (raincoat)| (umbrella));
 
-public $yes = (yea | sure | yes | yep [please]) {out.yes=1};
+public $yes = (yeah | sure | yes | yep) [please] {out.yes=1};
 
 public $no = (no | nah | nope | no way) {out.no=1};
 
-public $endgame = (stop the game | end the game) {out.stop=1};
+public $endgame = (stop|end) (the game|packing|playing) {out.stop=1};
 
-public $continue = ((we | let's | you) [can] continue [the game]) {out.continue=1};
+public $continue = ([we | let's | you] [can] continue [the game]) {out.continue=1};

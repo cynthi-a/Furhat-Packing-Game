@@ -9,13 +9,15 @@
 	<import class="javafx.util.Pair"/>
 	<import class="java.util.Iterator"/>
 	<import class="java.util.Scanner"/>
+	<import class="java.util.Random"/>
 	
  	<param name="agent" type="iristk.situated.SystemAgentFlow"/>
 	<param name="packables" type="PackablesMap"/>
 	
 	<var name="system" type="iristk.situated.SystemAgent" value="agent.getSystemAgent()"/> 
 	<var name="packingList" type="LinkedList&lt;String&gt;" value = "new java.util.LinkedList&lt;String&gt;()"/>
-
+	<var name="random" type="Random" value="new Random()"/>
+	
 	<state id="Idle" extends="Dialog">
 		<onentry>
 			<if cond="system.hasUsers()">
@@ -52,13 +54,13 @@
 		</onentry>
 	</state>
 	
-	<state id="ExplainGame" extends="Dialog">
+	<state id="ExplainGame">
 		<onentry>
 			<agent:say>The game goes like this: </agent:say>
-			<agent:say>I will start by saying I pack my bag and I take with me for example<expr>packables.getRandom().getValue()</expr>
+			<agent:prompt>I will start by saying I pack my bag and I take with me for example<expr>packables.getRandom().getValue()</expr>
 			. You then have to repeat the exact same sentence. At the end, you add another item to the
 			packing list and it is my turn again. We continue this until one of us either fails to recall the exact
-			sequence of the items or all items have been packed. Do you understand the rules?</agent:say>
+			sequence of the items or all items have been packed. Do you understand the rules?</agent:prompt>
 			<agent:listen timeout="3000"/>
 		</onentry>
  		<onevent name="sense.user.speak" cond="event?:sem:yes">
@@ -68,7 +70,11 @@
 		<onevent name="sense.user.speak" cond="event?:sem:no">
 			<agent:say>Okay, let Cynthia explain it again.</agent:say>
 			<goto state="WaitToContinue"/>
-		</onevent>	 
+		</onevent>
+		<onevent name="sense.user.speak">
+			<agent:say>Sorry, what were you saying?</agent:say>
+			<agent:listen timeout="3000"/>
+		</onevent> 
 	</state>
 	
 	<state id="PackIntro" extends="Dialog">
@@ -166,17 +172,52 @@
 					
 			and</agent:say>
 			
-			<!-- insert logic to handle random failure here 
-			<if cond="packingList.size() >= 4">
-				<exec></exec>
-			</if> -->
+<!--  insert logic to handle random failure here  -->
+			<if cond="packingList.size() &gt;= 10">
+				<if cond="random.nextFloat() &lt;= 0.7">
+					<goto state="FailRound"/>
+					<else/>
+						<call state="PackRandomItem"/>
+				</if>
+				<elseif cond="packingList.size() &gt;= 6"/>
+					<if cond="random.nextFloat() &lt;= 0.3">
+						<goto state="FailRound"/>
+						<else/>
+						<call state="PackRandomItem"/>
+					</if>
+				<elseif cond="packingList.size() &gt;= 4"/>
+					<if cond="random.nextFloat() &lt;= 0.2">
+						<goto state="FailRound"/>
+						<else/>
+						<call state="PackRandomItem"/>
+					</if>
+				<elseif cond="packingList.size() &gt;= 2"/>
+					<if cond="random.nextFloat() &lt;= 0.1">
+						<goto state="FailRound"/>
+						<else/>
+							<call state="PackRandomItem"/>
+				 	</if>
+				<else/>
+					<call state="PackRandomItem"/>
+			</if> 
+	
 			
-			
-			
-			
-			
-			<call state="PackRandomItem"/>
+			<random>
+				<agent:say>Now you</agent:say>
+				<agent:say>Your turn</agent:say>
+			</random>
 			<goto state="PlayerPacks"/>
+		</onentry>
+
+	</state>
+	
+	<state id="FailRound">
+		<onentry>
+			<random>
+				<agent:say gesture="'express_sad'">I forgot which item comes next. You win.</agent:say>
+				
+			</random>
+			<goto state="CheckAgain"/>
 		</onentry>
 	</state>
 	
@@ -184,17 +225,10 @@
 		<var name="randomPackable" type="Pair&lt;String,String&gt;" value="packables.getRandom()"></var>
 		<onentry>
 		
-		
-<!-- 		<repeat while="packingList.contains(randomPackable.getValue())">
+			<repeat while="packingList.contains(randomPackable.getKey())">
 				<exec>randomPackable = packables.getRandom()</exec>
-			</repeat> -->
-			<exec>
-			
-			while(packingList.contains(randomPackable.getValue())) {
-				randomPackable = packables.getRandom();
-			}
-			</exec>
-			
+			</repeat> 
+
 			<exec>packingList.add(randomPackable.getKey())</exec>
 			<agent:say>
 				<expr>randomPackable.getValue()</expr>
@@ -232,7 +266,7 @@
 			<goto state="PackIntro"/>
 		</onevent>
 		<onevent name="sense.user.speak" cond="event?:sem:no">
-			<agent:say gesture="'emotion_sad'">Okay, goodbye</agent:say>
+			<agent:say gesture="'express_sad'">Okay, goodbye</agent:say>
 			<call state="ClearPackingList"/>
 			<goto state="WaitToContinue"/>
 		</onevent>		
