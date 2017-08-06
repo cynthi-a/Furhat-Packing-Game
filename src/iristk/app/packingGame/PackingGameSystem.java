@@ -18,6 +18,7 @@ import iristk.situated.SystemAgentFlow;
 import iristk.speech.SemanticGrammarContext;
 import iristk.speech.SpeechGrammarContext;
 import iristk.speech.Voice.Gender;
+import iristk.speech.google.GoogleRecognizerFactory;
 import iristk.speech.nuancecloud.NuanceCloudRecognizerFactory;
 import iristk.speech.windows.WindowsRecognizerFactory;
 import iristk.speech.windows.WindowsSynthesizer;
@@ -46,10 +47,11 @@ public class PackingGameSystem {
 		
 		system.setupGUI();
 		
-		system.setupKinect();
+		//system.setupKinect();
 		
 		//system.setupMonoMicrophone(new WindowsRecognizerFactory());
-		system.setupMonoMicrophone(new NuanceCloudRecognizerFactory());
+		//system.setupMonoMicrophone(new NuanceCloudRecognizerFactory());
+		system.setupMonoMicrophone(new GoogleRecognizerFactory());
 		//system.setupStereoMicrophones(new WindowsRecognizerFactory());
 		//system.setupKinectMicrophone(new NuanceCloudRecognizerFactory());
 				

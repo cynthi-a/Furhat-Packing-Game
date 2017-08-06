@@ -4,11 +4,13 @@ IrisTK version 2017.01.27 at C:\Users\cynthia\IrisTK
 
 language en-US;
 
+root $root;
+
 public $root = (([I pack my bag and I take with me] [a] [pair of] $packables {out.packables=rules.packables}) | ($yes {out.yes=1}) | ($no {out.no=1}) | $endgame {out.stop=1} | $continue {out.continue=1});
 
 public $packables = [I pack my bag and I take with me] [a] [an] [pair of] $packable {out=rules.packable};
 
-$packable = ((moisturizer) | (belt) | (hairbrush) | (bikini) | (towel) | (toothbrush) | (laptop) | (phone) | (shoes) | (sunglasses) | (sunscreen) | (raincoat)| (umbrella));
+public $packable = ((moisturizer) | (book) | (shaver) | (hairbrush) | (bikini) | (pyjamas) | (towel) | (toothbrush) | (phone) | (shoes) | (sunglasses) | (sunscreen) | (charger) | (raincoat)| (umbrella));
 
 public $yes = (yeah | sure | yes | yep) [please] {out.yes=1};
 
@@ -16,4 +18,4 @@ public $no = (no | nah | nope | no way) {out.no=1};
 
 public $endgame = (stop|end) (the game|packing|playing) {out.stop=1};
 
-public $continue = ([we | let's | you] [can] continue [the game]) {out.continue=1};
+public $continue = ([we | let's | you] [can] continue [the game]) | skip the intro {out.continue=1};

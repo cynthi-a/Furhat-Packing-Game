@@ -56,11 +56,11 @@
 	
 	<state id="ExplainGame">
 		<onentry>
-			<agent:say>The game goes like this: </agent:say>
-			<agent:prompt>I will start by saying I pack my bag and I take with me for example<expr>packables.getRandom().getValue()</expr>
-			. You then have to repeat the exact same sentence. At the end, you add another item to the
-			packing list and it is my turn again. We continue this until one of us either fails to recall the exact
-			sequence of the items or all items have been packed. Do you understand the rules?</agent:prompt>
+			<agent:prompt>The game goes like this: </agent:prompt>
+			<agent:say>I will start by saying I pack my bag and I take with me for example<expr>packables.getRandom().getValue()</expr>.
+			You then have to repeat the exact same sentence. At the end, you add another item to the packing list and it is my turn again.
+			We continue this until one of us either fails to recall the exact sequence of the items or all items have been packed.
+			Do you understand the rules?</agent:say>
 			<agent:listen timeout="3000"/>
 		</onentry>
  		<onevent name="sense.user.speak" cond="event?:sem:yes">
@@ -70,6 +70,10 @@
 		<onevent name="sense.user.speak" cond="event?:sem:no">
 			<agent:say>Okay, let Cynthia explain it again.</agent:say>
 			<goto state="WaitToContinue"/>
+		</onevent>
+		<onevent name="sense.user.speak" cond="event?:sem:continue">
+			<agent:say>Ok if you already know the rules, let's just start. Ready?</agent:say>
+			<goto state="PackIntro"/>
 		</onevent>
 		<onevent name="sense.user.speak">
 			<agent:say>Sorry, what were you saying?</agent:say>
@@ -172,7 +176,7 @@
 					
 			and</agent:say>
 			
-<!--  insert logic to handle random failure here  -->
+			
 			<if cond="packingList.size() &gt;= 10">
 				<if cond="random.nextFloat() &lt;= 0.7">
 					<goto state="FailRound"/>
@@ -180,19 +184,19 @@
 						<call state="PackRandomItem"/>
 				</if>
 				<elseif cond="packingList.size() &gt;= 6"/>
-					<if cond="random.nextFloat() &lt;= 0.3">
+					<if cond="random.nextFloat() &lt;= 0.5">
 						<goto state="FailRound"/>
 						<else/>
 						<call state="PackRandomItem"/>
 					</if>
 				<elseif cond="packingList.size() &gt;= 4"/>
-					<if cond="random.nextFloat() &lt;= 0.2">
+					<if cond="random.nextFloat() &lt;= 0.3">
 						<goto state="FailRound"/>
 						<else/>
 						<call state="PackRandomItem"/>
 					</if>
 				<elseif cond="packingList.size() &gt;= 2"/>
-					<if cond="random.nextFloat() &lt;= 0.1">
+					<if cond="random.nextFloat() &lt;= 0.2">
 						<goto state="FailRound"/>
 						<else/>
 							<call state="PackRandomItem"/>
@@ -215,7 +219,6 @@
 		<onentry>
 			<random>
 				<agent:say gesture="'express_sad'">I forgot which item comes next. You win.</agent:say>
-				
 			</random>
 			<goto state="CheckAgain"/>
 		</onentry>
@@ -258,7 +261,7 @@
 				<agent:say>Would you like another round?</agent:say>
 				<agent:say>Shall we try again?</agent:say>
 			</random>
-			<agent:listen/>
+			<agent:listen timeout="9000"/>
 		</onentry>
 		<onevent name="sense.user.speak" cond="event?:sem:yes">
 			<agent:say gesture="'smile'">Okay, let's play again.</agent:say>

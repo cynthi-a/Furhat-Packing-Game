@@ -5,9 +5,12 @@ towel;a towel
 bikini;a bikini
 laptop;a laptop
 phone;a cell phone
-belt;a belt
+shaver;a shaver
 sunglasses;a pair of sunglasses 
 moisturizer;moisturizer
 sunscreen;a bottle of sunscreen
 umbrella;an umbrella
 raincoat;a raincoat
+book;a book
+charger,a charger
+pyjamas;pyjamas
