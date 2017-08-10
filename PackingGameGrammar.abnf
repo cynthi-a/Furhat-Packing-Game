@@ -10,7 +10,7 @@ public $root = (([I pack my bag and I take with me] [a] [pair of] $packables {ou
 
 public $packables = [I pack my bag and I take with me] [a] [an] [pair of] $packable {out=rules.packable};
 
-public $packable = ((moisturizer) | (book) | (shaver) | (hairbrush) | (bikini) | (pyjamas) | (towel) | (toothbrush) | (phone) | (shoes) | (sunglasses) | (sunscreen) | (charger) | (raincoat)| (umbrella));
+public $packable = ((moisturizer) | (book) | (shaver) | (hairbrush) | (bikini) | (pajamas) | (towel) | (toothbrush) | (phone) | (shoes) | (sunglasses) | (sunscreen) | (charger) | (raincoat)| (umbrella));
 
 public $yes = (yeah | sure | yes | yep) [please] {out.yes=1};
 

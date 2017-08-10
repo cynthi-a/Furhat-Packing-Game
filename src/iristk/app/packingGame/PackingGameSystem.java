@@ -47,7 +47,7 @@ public class PackingGameSystem {
 		
 		system.setupGUI();
 		
-		//system.setupKinect();
+		system.setupKinect();
 		
 		//system.setupMonoMicrophone(new WindowsRecognizerFactory());
 		//system.setupMonoMicrophone(new NuanceCloudRecognizerFactory());
@@ -55,7 +55,7 @@ public class PackingGameSystem {
 		//system.setupStereoMicrophones(new WindowsRecognizerFactory());
 		//system.setupKinectMicrophone(new NuanceCloudRecognizerFactory());
 				
-		//system.connectToBroker("furhat", "127.0.0.1");
+		//system.connectToBroker("furhat", "172.20.89.80");
 		system.setupFace(new WindowsSynthesizer(), Gender.MALE);
 		
 		PackablesMap packables = new PackablesMap(system.getPackageFile("packables.txt"));

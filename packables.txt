@@ -12,5 +12,5 @@ sunscreen;a bottle of sunscreen
 umbrella;an umbrella
 raincoat;a raincoat
 book;a book
-charger,a charger
-pyjamas;pyjamas
+charger;a charger
+pajamas;pajamas

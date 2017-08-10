@@ -39,7 +39,7 @@
 			<reentry/>
 		</onentry>
 		<onevent name="sense.user.speak" cond="event?:sem:continue">
-			<goto state="PackIntro"/>
+			<goto state="FurhatPacks"/>
 		</onevent>
 	</state>
 	
@@ -50,51 +50,38 @@
 				<agent:say gesture="'smile'">Hi. I am Furhat! Let's play a game.</agent:say>
 				<agent:say gesture="'smile'">Hey there! Let's play a game.</agent:say>
 			</random>
-			<goto state="ExplainGame"/>
+			<agent:say>Would you like me to explain the rules?</agent:say>
+			<agent:listen/>
 		</onentry>
+		<onevent name="sense.user.speak" cond="event?:sem:yes">
+			<goto state="ExplainGame"/>
+		</onevent>
+		<onevent name="sense.user.speak" cond="event?:sem:no">
+			<agent:say>Okay, let's play. Are you ready? Here goes</agent:say>
+			<goto state="FurhatPacks"/>
+		</onevent>
 	</state>
 	
-	<state id="ExplainGame">
+	<state id="ExplainGame" extends="Dialog">
 		<onentry>
-			<agent:prompt>The game goes like this: </agent:prompt>
+			<agent:say>The game goes like this: </agent:say>
 			<agent:say>I will start by saying I pack my bag and I take with me for example<expr>packables.getRandom().getValue()</expr>.
 			You then have to repeat the exact same sentence. At the end, you add another item to the packing list and it is my turn again.
 			We continue this until one of us either fails to recall the exact sequence of the items or all items have been packed.
 			Do you understand the rules?</agent:say>
-			<agent:listen timeout="3000"/>
+			<agent:listen/>
 		</onentry>
  		<onevent name="sense.user.speak" cond="event?:sem:yes">
 			<agent:say>Okay, let's play</agent:say>
-			<goto state="PackIntro"/>
+			<goto state="FurhatPacks"/>
+			
 		</onevent> 
 		<onevent name="sense.user.speak" cond="event?:sem:no">
 			<agent:say>Okay, let Cynthia explain it again.</agent:say>
 			<goto state="WaitToContinue"/>
 		</onevent>
-		<onevent name="sense.user.speak" cond="event?:sem:continue">
-			<agent:say>Ok if you already know the rules, let's just start. Ready?</agent:say>
-			<goto state="PackIntro"/>
-		</onevent>
-		<onevent name="sense.user.speak">
-			<agent:say>Sorry, what were you saying?</agent:say>
-			<agent:listen timeout="3000"/>
-		</onevent> 
 	</state>
-	
-	<state id="PackIntro" extends="Dialog">
-		
-		<onentry>
-			<agent:say>I pack my bag and I take with me:</agent:say>
-			<call state="PackRandomItem"/>
-			<random>
-				<agent:say>Your turn</agent:say>
-				<agent:say>Now you</agent:say>
-				<agent:say>It's your turn</agent:say>
-			</random>
- 			<goto state="PlayerPacks" />
-		</onentry>
-	</state>
-	
+
 	<state id="UserAddsItem" extends="Dialog">
 		<param name="newItem" type="String"/>
  		<onentry>
@@ -103,7 +90,7 @@
 				<exec>System.out.println(packingList)</exec>
 				<elseif cond="packingList.contains(newItem)"/>
 					<agent:say><expr>newItem</expr>is already in the packing list</agent:say>
-					<goto state="CheckAgain"/>
+					<goto state="CheckAgain" p:gameIsWon="false"/>
 			</if>
 		<return/>
 		</onentry>
@@ -140,17 +127,19 @@
  					<elseif cond="!packingList.contains(nextResponse)"/>
  						<agent:say><expr>nextResponse</expr>is not in the packing list</agent:say>
  					</if>
-					<goto state="CheckAgain"/>
+					<goto state="CheckAgain" p:gameIsWon="false"/>
 				</if>
  			</repeat>
 			
 			<if cond="responseIterator.hasNext()">
 				<call state="UserAddsItem" p:newItem="responseIterator.next()"/>
  				<elseif cond="!responseIterator.hasNext()"/>
-					<agent:say>Seems like you forgot to add a new item to the list</agent:say>
-				<goto state="CheckAgain"/>
+					<agent:say>Seems like you forgot to add a new item to the list or the item you added is not a packable item</agent:say>
+				<goto state="CheckAgain" p:gameIsWon="false"/>
 			</if> 
 			
+			<!-- NEW -->
+			<call state="PraisePlayer"/>
 			<goto state="FurhatPacks"/>
 		</onevent>
 	</state>
@@ -158,45 +147,41 @@
 	
 	<state id="FurhatPacks" extends="Dialog">
 		<var name="packingListIterator" type="Iterator" value="packingList.iterator()" />
-		
-		<var name="furhatFails" type="boolean" value="false"/>
+		<var name="randomFloat" type="float" value="random.nextFloat()"/>
 		
 		<onentry>
-			<random>
-				<agent:say gesture="'nod'">OK it's my turn now</agent:say>
-				<agent:say>Alright then. My turn</agent:say>
-				<agent:say gesture="'nod'">Good job. Now me</agent:say>
-				<agent:say>Well done. I will go on</agent:say>
-			</random>
 			<agent:say>I pack my bag and I take with me
-			
-			<repeat while="packingListIterator.hasNext()">
-				<expr>packables.get(packingListIterator.next())</expr>	
-			</repeat>	
-					
-			and</agent:say>
-			
-			
-			<if cond="packingList.size() &gt;= 10">
-				<if cond="random.nextFloat() &lt;= 0.7">
-					<goto state="FailRound"/>
-					<else/>
-						<call state="PackRandomItem"/>
+				<repeat while="packingListIterator.hasNext()">
+					<expr>packables.get(packingListIterator.next())</expr>	
+				</repeat>	
+				<if cond="packingList.size() &gt; 1">
+					and
 				</if>
+			</agent:say>
+			
+			<if cond="packingList.size() == packables.size()">
+				<goto state="CheckAgain" p:gameIsWon="true"/>
+				
+				<elseif cond="packingList.size() &gt;= 10"/>
+					<if cond="randomFloat &lt;= 0.7">
+						<goto state="FailRound"/>
+						<else/>
+							<call state="PackRandomItem"/>
+					</if>
 				<elseif cond="packingList.size() &gt;= 6"/>
-					<if cond="random.nextFloat() &lt;= 0.5">
+					<if cond="randomFloat &lt;= 0.5">
 						<goto state="FailRound"/>
 						<else/>
 						<call state="PackRandomItem"/>
 					</if>
 				<elseif cond="packingList.size() &gt;= 4"/>
-					<if cond="random.nextFloat() &lt;= 0.3">
+					<if cond="randomFloat &lt;= 0.3">
 						<goto state="FailRound"/>
 						<else/>
 						<call state="PackRandomItem"/>
 					</if>
 				<elseif cond="packingList.size() &gt;= 2"/>
-					<if cond="random.nextFloat() &lt;= 0.2">
+					<if cond="randomFloat &lt;= 0.2">
 						<goto state="FailRound"/>
 						<else/>
 							<call state="PackRandomItem"/>
@@ -215,12 +200,24 @@
 
 	</state>
 	
+	<state id="PraisePlayer">
+		<onentry>
+			<random>
+				<agent:say gesture="'nod'">OK it's my turn now</agent:say>
+				<agent:say>Alright then. My turn</agent:say>
+				<agent:say gesture="'nod'">Good job. Now me</agent:say>
+				<agent:say>Well done. I will go on</agent:say>
+			</random>
+			<return/>
+		</onentry>
+	</state>
+	
 	<state id="FailRound">
 		<onentry>
 			<random>
 				<agent:say gesture="'express_sad'">I forgot which item comes next. You win.</agent:say>
 			</random>
-			<goto state="CheckAgain"/>
+			<goto state="CheckAgain" p:gameIsWon="false"/>
 		</onentry>
 	</state>
 	
@@ -250,12 +247,19 @@
 
 	
 	<state id="CheckAgain" extends="Dialog">
+		<param name="gameIsWon" type="boolean" default="false"/>
 		<onentry>
-			<random>
-				<agent:say gesture="'brow_raise'">This round, we managed to remember<expr>packingList.size()</expr><if cond="packingList.size()==1">item only<else/>items</if></agent:say>
-				<agent:say gesture="'brow_raise'">We remembered<expr>packingList.size()</expr><if cond="packingList.size()==1">item<else/>items</if>in this round</agent:say>
-				<agent:say gesture="'brow_raise'">Let's see if we can beat<expr>packingList.size()</expr><if cond="packingList.size()==1">item<else/>items</if>in the next round</agent:say>
-			</random>
+			<if cond="gameIsWon">
+				<agent:say>Congratulations! You remembered all<expr>packables.size()</expr>items in the game! Well done</agent:say>
+			
+				<else/>
+				<random>
+					<agent:say gesture="'brow_raise'">This round, we managed to remember<expr>packingList.size()</expr><if cond="packingList.size()==1">item only<else/>items</if></agent:say>
+					<agent:say gesture="'brow_raise'">We remembered<expr>packingList.size()</expr><if cond="packingList.size()==1">item<else/>items</if>in this round</agent:say>
+					<agent:say gesture="'brow_raise'">Let's see if we can beat<expr>packingList.size()</expr><if cond="packingList.size()==1">item<else/>items</if>in the next round</agent:say>
+				</random>
+			</if>
+
 			<random>
 				<agent:say gesture="'smile'">Do you want to play again?</agent:say>
 				<agent:say>Would you like another round?</agent:say>
@@ -266,7 +270,7 @@
 		<onevent name="sense.user.speak" cond="event?:sem:yes">
 			<agent:say gesture="'smile'">Okay, let's play again.</agent:say>
 			<call state="ClearPackingList"/>
-			<goto state="PackIntro"/>
+			<goto state="FurhatPacks"/>
 		</onevent>
 		<onevent name="sense.user.speak" cond="event?:sem:no">
 			<agent:say gesture="'express_sad'">Okay, goodbye</agent:say>
@@ -288,7 +292,8 @@
 		</onevent>
 		<onevent name="sense.user.speak">
 			<agent:say>Sorry, I didn't get that.</agent:say>
-			<reentry/>
+			<!-- <reentry/> -->
+			<agent:listen/>
 		</onevent>
 		<onevent name="sense.user.speak.side">
 			<agent:attendOther mode="'eyes'" />
