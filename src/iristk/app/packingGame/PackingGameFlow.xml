@@ -82,7 +82,7 @@
 		</onevent>
 	</state>
 
-	<state id="UserAddsItem" extends="Dialog">
+	<state id="PlayerAddsItem" extends="Dialog">
 		<param name="newItem" type="String"/>
  		<onentry>
 			<if cond="!packingList.contains(newItem)">
@@ -132,7 +132,7 @@
  			</repeat>
 			
 			<if cond="responseIterator.hasNext()">
-				<call state="UserAddsItem" p:newItem="responseIterator.next()"/>
+				<call state="PlayerAddsItem" p:newItem="responseIterator.next()"/>
  				<elseif cond="!responseIterator.hasNext()"/>
 					<agent:say>Seems like you forgot to add a new item to the list or the item you added is not a packable item</agent:say>
 				<goto state="CheckAgain" p:gameIsWon="false"/>
@@ -166,28 +166,28 @@
 					<if cond="randomFloat &lt;= 0.7">
 						<goto state="FailRound"/>
 						<else/>
-							<call state="PackRandomItem"/>
+							<call state="FurhatAddsItem"/>
 					</if>
 				<elseif cond="packingList.size() &gt;= 6"/>
 					<if cond="randomFloat &lt;= 0.5">
 						<goto state="FailRound"/>
 						<else/>
-						<call state="PackRandomItem"/>
+						<call state="FurhatAddsItem"/>
 					</if>
 				<elseif cond="packingList.size() &gt;= 4"/>
 					<if cond="randomFloat &lt;= 0.3">
 						<goto state="FailRound"/>
 						<else/>
-						<call state="PackRandomItem"/>
+						<call state="FurhatAddsItem"/>
 					</if>
 				<elseif cond="packingList.size() &gt;= 2"/>
 					<if cond="randomFloat &lt;= 0.2">
 						<goto state="FailRound"/>
 						<else/>
-							<call state="PackRandomItem"/>
+							<call state="FurhatAddsItem"/>
 				 	</if>
 				<else/>
-					<call state="PackRandomItem"/>
+					<call state="FurhatAddsItem"/>
 			</if> 
 	
 			
@@ -221,7 +221,7 @@
 		</onentry>
 	</state>
 	
-	<state id="PackRandomItem">
+	<state id="FurhatAddsItem">
 		<var name="randomPackable" type="Pair&lt;String,String&gt;" value="packables.getRandom()"></var>
 		<onentry>
 		
