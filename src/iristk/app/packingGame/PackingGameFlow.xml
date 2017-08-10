@@ -90,7 +90,7 @@
 				<exec>System.out.println(packingList)</exec>
 				<elseif cond="packingList.contains(newItem)"/>
 					<agent:say><expr>newItem</expr>is already in the packing list</agent:say>
-					<goto state="CheckAgain" p:gameIsWon="false"/>
+					<goto state="CheckAgain"/>
 			</if>
 		<return/>
 		</onentry>
@@ -127,18 +127,17 @@
  					<elseif cond="!packingList.contains(nextResponse)"/>
  						<agent:say><expr>nextResponse</expr>is not in the packing list</agent:say>
  					</if>
-					<goto state="CheckAgain" p:gameIsWon="false"/>
+					<goto state="CheckAgain"/>
 				</if>
  			</repeat>
 			
 			<if cond="responseIterator.hasNext()">
 				<call state="PlayerAddsItem" p:newItem="responseIterator.next()"/>
  				<elseif cond="!responseIterator.hasNext()"/>
-					<agent:say>Seems like you forgot to add a new item to the list or the item you added is not a packable item</agent:say>
-				<goto state="CheckAgain" p:gameIsWon="false"/>
+					<agent:say>Seems like you forgot to add a new item to the list</agent:say>
+				<goto state="CheckAgain"/>
 			</if> 
 			
-			<!-- NEW -->
 			<call state="PraisePlayer"/>
 			<goto state="FurhatPacks"/>
 		</onevent>
@@ -217,7 +216,7 @@
 			<random>
 				<agent:say gesture="'express_sad'">I forgot which item comes next. You win.</agent:say>
 			</random>
-			<goto state="CheckAgain" p:gameIsWon="false"/>
+			<goto state="CheckAgain"/>
 		</onentry>
 	</state>
 	
@@ -292,8 +291,7 @@
 		</onevent>
 		<onevent name="sense.user.speak">
 			<agent:say>Sorry, I didn't get that.</agent:say>
-			<!-- <reentry/> -->
-			<agent:listen/>
+			<reentry/>
 		</onevent>
 		<onevent name="sense.user.speak.side">
 			<agent:attendOther mode="'eyes'" />
