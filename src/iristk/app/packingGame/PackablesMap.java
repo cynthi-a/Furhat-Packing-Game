@@ -1,7 +1,6 @@
 package iristk.app.packingGame;
 
 import iristk.system.IrisUtils;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,12 +11,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
-
 import javafx.util.Pair;
-
 import org.slf4j.Logger;
 
-
+/**
+ * This class reads the packagle file packables.txt and stores its contents
+ * into a HashMap.
+ */
 public class PackablesMap extends HashMap<String, String>{
 	
 	private static Logger logger = IrisUtils.getLogger(PackablesMap.class);
@@ -38,14 +38,8 @@ public class PackablesMap extends HashMap<String, String>{
 					System.err.println("Illegal line " + ln + ": " + line);
 					continue;
 				}
-//				String[] cols = line.split(";");
-//				if (cols.length < 5) {
-//					logger.warn("Not enough columns in line " + ln + ": " + line);
-//					continue;
-//				} 
-//				Question q = new Question("q" + qn++, cols);
-//				add(q);
-				
+
+				//definition of the delimiter that separates values and key Strings in packables.txt
 				String[] cols = line.split(";");
 				
 				if (cols.length >= 2) {
@@ -56,7 +50,6 @@ public class PackablesMap extends HashMap<String, String>{
 				packablesNo++;
 			}
 			logger.info(packablesNo + " packable items read");
-//			randimize();
 			System.out.println(this.toString());
 		} catch (IOException e) {
 			throw new IOException("Problem reading questions: " + e.getMessage());
@@ -67,6 +60,12 @@ public class PackablesMap extends HashMap<String, String>{
 		this(new FileInputStream(file));
 	}
 	
+	/**
+	 * getRandom() returns a random Key-Value Pair from the PackablesMap.
+	 * It is later needed for the game interaction, when the agent is required to 
+	 * add a random item to the packing list.
+	 * 
+	 */
 	public Pair<String,String> getRandom() {
 		List<String> keys = new ArrayList<String>(this.keySet());
 		String randomKey = keys.get(generator.nextInt(keys.size()));

@@ -12,7 +12,7 @@
  * 
  * Relevant Package Files:
  * PackingGameFlow.xml contains the conversation flow logic.
- * The packable items are listed in the package file packables.txt.
+ * The packable items relevant for the game are listed in packables.txt.
  * The speech grammar is defined in PackingGameGrammar.abnf.
  * 
  */
