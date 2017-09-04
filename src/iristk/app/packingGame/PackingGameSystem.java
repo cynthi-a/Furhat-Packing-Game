@@ -1,33 +1,33 @@
-/*******************************************************************************
- * Copyright (c) 2014 Gabriel Skantze.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the GNU Public License v3.0
- * which accompanies this distribution, and is available at
- * http://www.gnu.org/licenses/gpl.html
+/**
+ * Author: Cynthia Lee
  * 
  * Contributors:
- *     Gabriel Skantze - initial API and implementation
- ******************************************************************************/
-package iristk.app.packingGame;
+ * Gabriel Skantze - initial API and author of dialog-system template
+ * 
+ * Description:
+ * This is the main class for a dialog-system based on the IrisTK template
+ * 'situated-dialog'. The system models a spoken memory game in which two players,
+ * an agent and a human player, are supposed to continuously add items to a packing list,
+ * until the human player ceases to remember all packed items or their order.
+ * 
+ * Relevant Package Files:
+ * PackingGameFlow.xml contains the conversation flow logic.
+ * The packable items are listed in the package file packables.txt.
+ * The speech grammar is defined in PackingGameGrammar.abnf.
+ * 
+ */
 
-import java.util.TreeSet;
+package iristk.app.packingGame;
 
 import iristk.situated.SituatedDialogSystem;
 import iristk.situated.SystemAgent;
 import iristk.situated.SystemAgentFlow;
 import iristk.speech.SemanticGrammarContext;
-import iristk.speech.SpeechGrammarContext;
 import iristk.speech.Voice.Gender;
 import iristk.speech.google.GoogleRecognizerFactory;
-import iristk.speech.nuancecloud.NuanceCloudRecognizerFactory;
-import iristk.speech.windows.WindowsRecognizerFactory;
 import iristk.speech.windows.WindowsSynthesizer;
-import iristk.system.IrisUtils;
 import iristk.util.Language;
-import iristk.app.multiguess.MultiguessFlow;
 import iristk.cfg.ABNFGrammar;
-import iristk.cfg.ListGrammar;
-import iristk.cfg.SRGSGrammar;
 import iristk.flow.FlowModule;
 
 public class PackingGameSystem {
@@ -38,31 +38,57 @@ public class PackingGameSystem {
 		SystemAgentFlow systemAgentFlow = system.addSystemAgent();
 		
 		SystemAgent systemAgent = systemAgentFlow.getSystemAgent();
+		
+		/**
+		 * Different from the template 'situated-dialog', this system will only
+		 * handle one user, the human game opponent.
+		 */
 		systemAgent.setMaxUsers(1);
 		systemAgent.setInteractionDistance(2);
 	
 		system.setLanguage(Language.ENGLISH_US);
 	
+		/**
+		 * Uncomment the following line if you want to enable logging
+		 */
 		//system.setupLogging(new File("c:/iristk_logging"), true);
 		
 		system.setupGUI();
 		
-		system.setupKinect();
+		/**
+		 * The game works without a Kinect but it is advised to connect one as it
+		 * will offer a more engaging game experience, due to eye contact. Uncomment
+		 * the following line if you do not wish to use a Kinect.
+		 */
+		//system.setupKinect();
 		
+		/**
+		 * Choose one of the following microphones and speech recogniser sevices.
+		 * I advise GoogleRecogniser as it offers the most reliable speech interpretation.
+		 * However, if you do not have an internet connection, choose the WindowsRecogniser.
+		 * Consult the README to see how to properly set up any other recogniser.
+		 */
 		//system.setupMonoMicrophone(new WindowsRecognizerFactory());
 		//system.setupMonoMicrophone(new NuanceCloudRecognizerFactory());
 		system.setupMonoMicrophone(new GoogleRecognizerFactory());
 		//system.setupStereoMicrophones(new WindowsRecognizerFactory());
 		//system.setupKinectMicrophone(new NuanceCloudRecognizerFactory());
 				
-		//system.connectToBroker("furhat", "172.20.89.80");
+		/**
+		 * Uncomment the following line if you want to use a Furhat robot as an agent.
+		 * Remember to replace 0.0.0.0 with the IP-address of the Furhat you
+		 * want to use.
+		 */
+		//system.connectToBroker("furhat", "0.0.0.0");
+		
 		system.setupFace(new WindowsSynthesizer(), Gender.MALE);
 		
+		/**
+		 * The following three lines set up the module and give it the needed parameters,
+		 * which include a Map of the packable items, as defined in packables.txt.
+		 */
 		PackablesMap packables = new PackablesMap(system.getPackageFile("packables.txt"));
 		system.addModule(new FlowModule(new PackingGameFlow(systemAgentFlow, packables)));
-		
-		//system.loadContext("default", new SpeechGrammarContext(new SRGSGrammar(system.getPackageFile("PackingGameGrammar.xml"))));
-		//system.loadContext("default", new SpeechGrammarContext(new ABNFGrammar(system.getPackageFile("PackingGameGrammar.abnf"))));
 		system.loadContext("default", new SemanticGrammarContext(new ABNFGrammar(system.getPackageFile("PackingGameGrammar.abnf"))));
 
 		

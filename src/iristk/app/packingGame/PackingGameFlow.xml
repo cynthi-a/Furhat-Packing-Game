@@ -11,13 +11,25 @@
 	<import class="java.util.Scanner"/>
 	<import class="java.util.Random"/>
 	
+	<!-- PackingGameFlow takes two parameters. The first is the agent, as defined in the
+	main object. This could be either a virtual embodied agent or a Furhat robot.
+	The second parameter is the Map of packable items that can be used throughout the
+	game. One must define them in packables.txt and in PackingGameGrammar.abnf.
+	
+	packables is a Map, in which the keys are the packable items and the values contain
+	Strings that tell the agent how to list the items in spoken dialog, e.g.
+	a pair of sunglasses instead of sunglasses. -->
+	
  	<param name="agent" type="iristk.situated.SystemAgentFlow"/>
 	<param name="packables" type="PackablesMap"/>
 	
 	<var name="system" type="iristk.situated.SystemAgent" value="agent.getSystemAgent()"/> 
+	<!-- the following variable will contain the items about to be added during each game -->
 	<var name="packingList" type="LinkedList&lt;String&gt;" value = "new java.util.LinkedList&lt;String&gt;()"/>
 	<var name="random" type="Random" value="new Random()"/>
 	
+	
+	<!-- ENTRY STATE: Wait to detect a user, in which case continue to state Greeting. -->
 	<state id="Idle" extends="Dialog">
 		<onentry>
 			<if cond="system.hasUsers()">
@@ -33,16 +45,6 @@
 		</onevent>
 	</state>
 	
-	<state id="WaitToContinue">
-		<onentry>
-			<agent:listen/>
-			<reentry/>
-		</onentry>
-		<onevent name="sense.user.speak" cond="event?:sem:continue">
-			<goto state="FurhatPacks"/>
-		</onevent>
-	</state>
-	
 	<state id="Greeting" extends="Dialog">
 		<onentry>
 			<random>
@@ -53,6 +55,7 @@
 			<agent:say>Would you like me to explain the rules?</agent:say>
 			<agent:listen/>
 		</onentry>
+		<!-- The user can either hear the game rules or start a game right away -->
 		<onevent name="sense.user.speak" cond="event?:sem:yes">
 			<goto state="ExplainGame"/>
 		</onevent>
@@ -74,93 +77,47 @@
  		<onevent name="sense.user.speak" cond="event?:sem:yes">
 			<agent:say>Okay, let's play</agent:say>
 			<goto state="FurhatPacks"/>
-			
 		</onevent> 
+		<!-- If the user did not understand the rules, stay idle and wait for the
+		experiment conductor to explain the rules again -->
 		<onevent name="sense.user.speak" cond="event?:sem:no">
 			<agent:say>Okay, let Cynthia explain it again.</agent:say>
 			<goto state="WaitToContinue"/>
 		</onevent>
 	</state>
-
-	<state id="PlayerAddsItem" extends="Dialog">
-		<param name="newItem" type="String"/>
- 		<onentry>
-			<if cond="!packingList.contains(newItem)">
-				<exec>packingList.add(newItem)</exec>
-				<exec>System.out.println(packingList)</exec>
-				<elseif cond="packingList.contains(newItem)"/>
-					<agent:say><expr>newItem</expr>is already in the packing list</agent:say>
-					<goto state="CheckAgain"/>
-			</if>
-		<return/>
+	
+	
+	<!-- Stay idle until a cue is heard -->
+	<state id="WaitToContinue">
+		<onentry>
+			<agent:listen/>
+			<reentry/>
 		</onentry>
-	</state>
-
-	<state id="PlayerPacks" extends="Dialog">
-		<var name="packingListIterator" type="Iterator" value="packingList.iterator()" />
-		<var name="responseList" type="List" value="new LinkedList&lt;String&gt;()"/>
-		<onentry> 
-			<agent:listen timeout="10000" endSil="2000"/>
-		</onentry>
-		
-		<onevent name="sense.user.speak" cond="event?:sem:packables">
-			<var name="response" type="String" value="asString(event:text).toLowerCase()"/>
-
-			<exec>
-				Scanner sc = new Scanner(response);
-				while(sc.hasNext()) {
-					String nextWord = sc.next();
-					if (packables.containsKey(nextWord)) {
-						responseList.add(nextWord);
-					}
-				}
-			</exec>
-			
-			<var name="responseIterator" type="Iterator" value="responseList.iterator()"/>
-
- 			<repeat while="packingListIterator.hasNext()">
- 				<var name="nextResponse" value="responseIterator.next()"/>
- 				<if cond="!packingListIterator.next().equals(nextResponse) &amp;&amp; packingListIterator.hasNext()">
- 					
- 					<if cond="packingList.contains(nextResponse)">
- 						<agent:say><expr>nextResponse</expr>is in the packing list but at a different position</agent:say>
- 					<elseif cond="!packingList.contains(nextResponse)"/>
- 						<agent:say><expr>nextResponse</expr>is not in the packing list</agent:say>
- 					</if>
-					<goto state="CheckAgain"/>
-				</if>
- 			</repeat>
-			
-			<if cond="responseIterator.hasNext()">
-				<call state="PlayerAddsItem" p:newItem="responseIterator.next()"/>
- 				<elseif cond="!responseIterator.hasNext()"/>
-					<agent:say>Seems like you forgot to add a new item to the list</agent:say>
-				<goto state="CheckAgain"/>
-			</if> 
-			
-			<call state="PraisePlayer"/>
+		<onevent name="sense.user.speak" cond="event?:sem:continue">
 			<goto state="FurhatPacks"/>
 		</onevent>
 	</state>
 	
 	
+	<!-- State to handle the agent's turn in the game -->
 	<state id="FurhatPacks" extends="Dialog">
 		<var name="packingListIterator" type="Iterator" value="packingList.iterator()" />
 		<var name="randomFloat" type="float" value="random.nextFloat()"/>
-		
 		<onentry>
+			<!-- Go through the packed items and list them one by one -->
 			<agent:say>I pack my bag and I take with me
 				<repeat while="packingListIterator.hasNext()">
 					<expr>packables.get(packingListIterator.next())</expr>	
 				</repeat>	
-				<if cond="packingList.size() &gt; 1">
-					and
-				</if>
+				<if cond="packingList.size() &gt; 1">and</if>
 			</agent:say>
 			
+			<!-- The game is won when all packable items were packed -->
 			<if cond="packingList.size() == packables.size()">
 				<goto state="CheckAgain" p:gameIsWon="true"/>
 				
+				<!-- Otherwise, with increasing length of the packing list,
+				increase the chance that the agent fails/lets the human player win -->
 				<elseif cond="packingList.size() &gt;= 10"/>
 					<if cond="randomFloat &lt;= 0.7">
 						<goto state="FailRound"/>
@@ -171,13 +128,13 @@
 					<if cond="randomFloat &lt;= 0.5">
 						<goto state="FailRound"/>
 						<else/>
-						<call state="FurhatAddsItem"/>
+							<call state="FurhatAddsItem"/>
 					</if>
 				<elseif cond="packingList.size() &gt;= 4"/>
 					<if cond="randomFloat &lt;= 0.3">
 						<goto state="FailRound"/>
 						<else/>
-						<call state="FurhatAddsItem"/>
+							<call state="FurhatAddsItem"/>
 					</if>
 				<elseif cond="packingList.size() &gt;= 2"/>
 					<if cond="randomFloat &lt;= 0.2">
@@ -189,27 +146,14 @@
 					<call state="FurhatAddsItem"/>
 			</if> 
 	
-			
 			<random>
 				<agent:say>Now you</agent:say>
 				<agent:say>Your turn</agent:say>
 			</random>
 			<goto state="PlayerPacks"/>
 		</onentry>
-
 	</state>
 	
-	<state id="PraisePlayer">
-		<onentry>
-			<random>
-				<agent:say gesture="'nod'">OK it's my turn now</agent:say>
-				<agent:say>Alright then. My turn</agent:say>
-				<agent:say gesture="'nod'">Good job. Now me</agent:say>
-				<agent:say>Well done. I will go on</agent:say>
-			</random>
-			<return/>
-		</onentry>
-	</state>
 	
 	<state id="FailRound">
 		<onentry>
@@ -219,6 +163,7 @@
 			<goto state="CheckAgain"/>
 		</onentry>
 	</state>
+	
 	
 	<state id="FurhatAddsItem">
 		<var name="randomPackable" type="Pair&lt;String,String&gt;" value="packables.getRandom()"></var>
@@ -236,7 +181,100 @@
 			<return/>
 		</onentry>
 	</state>
+
+
+	<!-- State to handle the human player's response in the game -->
+	<state id="PlayerPacks" extends="Dialog">
+		<var name="packingListIterator" type="Iterator" value="packingList.iterator()" />
+		<var name="responseList" type="List" value="new LinkedList&lt;String&gt;()"/>
+		
+		<!-- Leave some extra time for timeout and end of utterance because user needs time to think -->
+		<onentry> 
+			<agent:listen timeout="10000" endSil="2000"/>
+		</onentry>
+		
+		<!-- As soon as a packable item is detected, save the entire following utterance in a String -->
+		<onevent name="sense.user.speak" cond="event?:sem:packables">
+			<var name="response" type="String" value="asString(event:text).toLowerCase()"/>
+			
+			<!-- Scan the response String one by one and add each packable item into a list, responseList -->
+			<exec>
+				Scanner sc = new Scanner(response);
+				while(sc.hasNext()) {
+					String nextWord = sc.next();
+					if (packables.containsKey(nextWord)) {
+						responseList.add(nextWord);
+					}
+				}
+			</exec>
+			
+			<var name="responseIterator" type="Iterator" value="responseList.iterator()"/>
+			
+			<!-- Compare the content of the response list to the packing list -->
+ 			<repeat while="packingListIterator.hasNext()">
+ 				<var name="nextResponse" value="responseIterator.next()"/>
+ 				
+ 				<!-- Inform the user of possible wrong order of listed items or missing items in the response -->
+ 				<if cond="!packingListIterator.next().equals(nextResponse) &amp;&amp; packingListIterator.hasNext()">
+ 					<if cond="packingList.contains(nextResponse)">
+ 						<agent:say><expr>nextResponse</expr>is in the packing list but at a different position</agent:say>
+ 					<elseif cond="!packingList.contains(nextResponse)"/>
+ 						<agent:say><expr>nextResponse</expr>is not in the packing list</agent:say>
+ 					</if>
+ 					
+ 					<!-- Ask the player if they want to play again -->
+					<goto state="CheckAgain"/>
+				</if>
+ 			</repeat>
+			
+			<!-- Check if the player added a new item to the packing list -->
+			<!-- If yes, call the helper state PlayerAddsItem -->
+			<!-- If not, ask the player if they want to play again -->
+			<if cond="responseIterator.hasNext()">
+				<call state="PlayerAddsItem" p:newItem="responseIterator.next()"/>
+ 				<elseif cond="!responseIterator.hasNext()"/>
+					<agent:say>Seems like you forgot to add a new item to the list</agent:say>
+				<goto state="CheckAgain"/>
+			</if> 
+			
+			<!-- Say cheerful words and let the agent continue -->
+			<call state="PraisePlayer"/>
+			<goto state="FurhatPacks"/>
+		</onevent>
+	</state>
 	
+	
+	<state id="PraisePlayer">
+		<onentry>
+			<random>
+				<agent:say gesture="'nod'">OK it's my turn now</agent:say>
+				<agent:say>Alright then. My turn</agent:say>
+				<agent:say gesture="'nod'">Good job. Now me</agent:say>
+				<agent:say>Well done. I will go on</agent:say>
+			</random>
+			<return/>
+		</onentry>
+	</state>
+
+
+	<!-- Helper state to verify if the item the player wants to add is already in the
+	packing list. If it is not, add it to the list. If it is, ask if they want to play again. -->
+	<state id="PlayerAddsItem" extends="Dialog">
+		<param name="newItem" type="String"/>
+ 		<onentry>
+			<if cond="!packingList.contains(newItem)">
+				<exec>packingList.add(newItem)</exec>
+				<exec>System.out.println(packingList)</exec>
+				<elseif cond="packingList.contains(newItem)"/>
+					<agent:say><expr>newItem</expr>is already in the packing list</agent:say>
+					<goto state="CheckAgain"/>
+			</if>
+		<return/>
+		</onentry>
+	</state>
+	
+	
+	<!-- Helper state to clear the packing list before each new game -->
 	<state id="ClearPackingList">
 		<onentry>
 			<exec>packingList.clear()</exec>
@@ -245,20 +283,23 @@
 	</state>
 
 	
+	<!-- Helper state to ask the user if they want to play again -->
 	<state id="CheckAgain" extends="Dialog">
+	
+		<!-- Takes a boolean parameter to indicate if the user won or lost -->
 		<param name="gameIsWon" type="boolean" default="false"/>
 		<onentry>
 			<if cond="gameIsWon">
 				<agent:say>Congratulations! You remembered all<expr>packables.size()</expr>items in the game! Well done</agent:say>
-			
 				<else/>
+				
+				<!-- Inform the user of the game statistics -->
 				<random>
 					<agent:say gesture="'brow_raise'">This round, we managed to remember<expr>packingList.size()</expr><if cond="packingList.size()==1">item only<else/>items</if></agent:say>
 					<agent:say gesture="'brow_raise'">We remembered<expr>packingList.size()</expr><if cond="packingList.size()==1">item<else/>items</if>in this round</agent:say>
 					<agent:say gesture="'brow_raise'">Let's see if we can beat<expr>packingList.size()</expr><if cond="packingList.size()==1">item<else/>items</if>in the next round</agent:say>
 				</random>
 			</if>
-
 			<random>
 				<agent:say gesture="'smile'">Do you want to play again?</agent:say>
 				<agent:say>Would you like another round?</agent:say>
@@ -271,6 +312,8 @@
 			<call state="ClearPackingList"/>
 			<goto state="FurhatPacks"/>
 		</onevent>
+		
+		<!-- If the user does not want to continue, instead of exiting the system, stay idle -->
 		<onevent name="sense.user.speak" cond="event?:sem:no">
 			<agent:say gesture="'express_sad'">Okay, goodbye</agent:say>
 			<call state="ClearPackingList"/>
@@ -278,6 +321,13 @@
 		</onevent>		
 	</state>
 	
+	
+	
+	<!-- State that is extended by most other states. Handles situations when
+	the speech recogniser fails to semantically interpret the user's utterance,
+	as well as when the user gives the spoken cue to abort and end the game. -->
+	<!-- Mainly inherited from the original IrisTK template 'situated-dialog' by 
+	Gabriel Skantze -->
 	<state id="Dialog">
 		<onevent name="sense.user.speech.start" cond="system.isAttending(event) and eq(event:speakers, 1)">
 			<agent:gesture name="'smile'"/>
