@@ -11,9 +11,14 @@ The packing game is based on the German children's game 'Ich packe meinen Koffer
 The game dialogue might look something like this:
 
 **Player 1:** *I pack my bags and I take with me a toothbrush*
+
 **Player 2:** *I pack my bags and I take with me a toothbrush and a shaver*
+
 **Player 1:** *I pack my bags and I take with me a toothbrush, a shaver and a bottle of sunscreen*
+
 **Player 2:** *I pack my bags and I take with me a toothbrush, a shaver and... I forgot which item comes next. You win.*
+
+
 
 ## Running the System
 The system was built with the [IrisTK](http://www.iristk.net/) dialogue system framework. It offers an integration of microphones, speech recognisers and cameras to allow for social robotics applications. IrisTK can be downloaded [here](http://www.iristk.net/download.html). Note that IrisTK can only work on Windows machines.
@@ -24,8 +29,10 @@ Once IrisTK is set up, as well as the relevant modules are connected, you can si
     
 Depending on which speech recogniser you choose (you can do so in *PackingGameSystem.java*), make sure you read the relevant [documentation](https://docs.myfurhat.com/recognizers/) on how to set up the needed cloud service accounts.
 
+
 ## Description of the Relevant Package Files
 The following table summarises which files are the main ones that are revelant for editing the stystem. Most of the files include comments themselves which is why the table only states their overall purpose.
+
 |Package File|Description|
 |----|----|
 |PackingGameSystem.java|This is the Java file that contains the main method. Here, you can set up the relevant modules, such as the speech recogniser, agent, Kinect, etc.|
