@@ -25,7 +25,7 @@ The system was built with the [IrisTK](http://www.iristk.net/) dialogue system f
 For most of the speech recognisers that IrisTK supports, internet access is a requirement. Furthermore, you need a microphone. Though it is not necessary for the system to work, you could connect and enable a Microsoft Kinect (in *PackingGameSystem.java*), which will provide a more engaging interaction.
 Once IrisTK is set up, as well as the relevant modules are connected, you can simply run the app via the command
 
-    irisTK Furhat-Packing-Game
+    irisTK packingGame
     
 Depending on which speech recogniser you choose (you can do so in *PackingGameSystem.java*), make sure you read the relevant [documentation](https://docs.myfurhat.com/recognizers/) on how to set up the needed cloud service accounts.
 
